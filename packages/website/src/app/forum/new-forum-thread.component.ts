@@ -64,6 +64,8 @@ export class NewForumThreadComponent implements OnInit {
     });
     this.pendingSubscription = null;
     this.serverError = null;
+    
+    this.selectionStart = null;
   }
 
   ngOnInit(): void {
@@ -80,6 +82,46 @@ export class NewForumThreadComponent implements OnInit {
         return FORUM_SECTION_NOT_FOUND;
       }
     }));
+  }
+
+  public toggleStyle(textArea, style: string){
+    const styleToMarktwin: object = {
+      "strong": "**",
+      "emphasis": "_"
+    };
+    
+    const mark: string = styleToMarktwin[style];
+    const value: string = this.body.value;
+    const start: int = textArea.selectionStart;
+    const end: int = textArea.selectionEnd;
+    const length: int = end - start;
+    
+    if (value.substr(start - mark.length, mark.length) == value.substr(end, mark.length)
+        && value.substr(end, mark.length) == mark){
+      this.body.setValue(
+        value.substr(0, start - mark.length) + value.substr(start, length) + value.substr(end + mark.length)
+      );
+      
+      textArea.selectionStart = start - mark.length;
+      textArea.selectionEnd = end - mark.length;
+    } else if (value.substr(start, mark.length) == value.substr(end - mark.length, mark.length)
+               && value.substr(start, mark.length) == mark) {
+      this.body.setValue(
+        value.substr(0, start) + value.substr(start + mark.length, length - mark.length*2) + value.substr(end)
+      );
+      
+      textArea.selectionStart = start;
+      textArea.selectionEnd = end - mark.length*2;
+    } else {
+      this.body.setValue(
+        value.substr(0, start) + mark + value.substr(start, length) + mark + value.substr(end)
+      );
+      
+      textArea.selectionStart = start + mark.length;
+      textArea.selectionEnd = end + mark.length;
+    }
+    
+    textArea.focus();
   }
 
   public onSubmit(event: Event) {

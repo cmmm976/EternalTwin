@@ -28,8 +28,12 @@
           </label>
           <label>
             <span i18n="Content of the first post of the new thread@@forum.newThread.content">Body</span>
-            <textarea name="body" class="field" formControlName="body"></textarea>
+            <textarea name="body" class="field" formControlName="body" #body></textarea>
           </label>
+          <div class="toolbar">
+            <button type="button" class="btn" (click)="toggleStyle(body, 'strong')"><strong>G</strong></button>
+            <button type="button" class="btn" (click)="toggleStyle(body, 'emphasis')"><em>I</em></button>
+          </div>
           <div class="actionBox">
             <input type="submit" class="btn primary" name="register" [disabled]="newThreadForm.invalid || pendingSubscription !== null" i18n-value="@@forum.newThread.submit" value="Create a new thread"/>
           </div>
