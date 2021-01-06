@@ -1,13 +1,14 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { $MarktwinText, MarktwinText } from "@eternal-twin/core/lib/core/marktwin-text";
-import { renderMarktwin } from "@eternal-twin/marktwin";
 import { HtmlText } from "@eternal-twin/core/lib/core/html-text.js";
+import { $MarktwinText, MarktwinText } from "@eternal-twin/core/lib/core/marktwin-text";
 import { ForumSection } from "@eternal-twin/core/lib/forum/forum-section";
 import { ForumSectionId } from "@eternal-twin/core/lib/forum/forum-section-id";
 import { ForumThread } from "@eternal-twin/core/lib/forum/forum-thread";
 import { $ForumThreadTitle, ForumThreadTitle } from "@eternal-twin/core/lib/forum/forum-thread-title";
+import { renderMarktwin } from "@eternal-twin/marktwin";
+import { Grammar } from "@eternal-twin/marktwin/lib/grammar.js";
 import { NEVER as RX_NEVER, Observable, Subscription } from "rxjs";
 import { map as rxMap } from "rxjs/operators";
 
@@ -36,6 +37,8 @@ export class NewForumThreadComponent implements OnInit {
 
   public pendingSubscription: Subscription | null;
   public serverError: Error | null;
+  public preview: string;
+  public showPreview: boolean;
 
   constructor(
     route: ActivatedRoute,
@@ -68,8 +71,6 @@ export class NewForumThreadComponent implements OnInit {
     this.serverError = null;
     this.showPreview = false;
     this.preview = "";
-    
-    this.selectionStart = null;
   }
 
   ngOnInit(): void {
@@ -88,47 +89,47 @@ export class NewForumThreadComponent implements OnInit {
     }));
   }
 
-  public toggleStyle(textArea: HTMLElement, style: string){
-    const styleToMarktwin: object = {
-      "strong": "**",
-      "emphasis": "_"
-    };
-    
-    const mark: string = styleToMarktwin[style];
+  public toggleStyle(textArea: HTMLInputElement, style: string) {
+    const styleToMarktwin: Map<string, string> = new Map([
+      ["strong", "**"],
+      ["emphasis", "_"],
+    ]);
+
+    const mark: string = styleToMarktwin.get(style) || "";
     const value: string = this.body.value;
-    const start: int = textArea.selectionStart;
-    const end: int = textArea.selectionEnd;
-    const length: int = end - start;
-    
-    if (value.substr(start - mark.length, mark.length) == value.substr(end, mark.length)
-        && value.substr(end, mark.length) == mark){
+    const start: number = textArea.selectionStart || 0;
+    const end: number = textArea.selectionEnd || 0;
+    const length: number = end - start;
+
+    if (value.substr(start - mark.length, mark.length) === value.substr(end, mark.length)
+        && value.substr(end, mark.length) === mark) {
       this.body.setValue(
         value.substr(0, start - mark.length) + value.substr(start, length) + value.substr(end + mark.length)
       );
-      
+
       textArea.selectionStart = start - mark.length;
       textArea.selectionEnd = end - mark.length;
-    } else if (value.substr(start, mark.length) == value.substr(end - mark.length, mark.length)
-               && value.substr(start, mark.length) == mark) {
+    } else if (value.substr(start, mark.length) === value.substr(end - mark.length, mark.length)
+               && value.substr(start, mark.length) === mark) {
       this.body.setValue(
-        value.substr(0, start) + value.substr(start + mark.length, length - mark.length*2) + value.substr(end)
+        value.substr(0, start) + value.substr(start + mark.length, length - mark.length * 2) + value.substr(end)
       );
-      
+
       textArea.selectionStart = start;
-      textArea.selectionEnd = end - mark.length*2;
+      textArea.selectionEnd = end - mark.length * 2;
     } else {
       this.body.setValue(
         value.substr(0, start) + mark + value.substr(start, length) + mark + value.substr(end)
       );
-      
+
       textArea.selectionStart = start + mark.length;
       textArea.selectionEnd = end + mark.length;
     }
-    
+
     textArea.focus();
   }
-  
-  public onShowPreview(){
+
+  public onShowPreview() {
     const mktGrammar: Grammar = {
       admin: false,
       depth: 4,
@@ -141,7 +142,7 @@ export class NewForumThreadComponent implements OnInit {
       strikethrough: true,
       strong: true,
     };
-    
+
     const htmlBody: HtmlText = renderMarktwin(mktGrammar, this.body.value);
     this.preview = htmlBody;
   }
