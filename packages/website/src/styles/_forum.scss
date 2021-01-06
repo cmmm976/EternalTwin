@@ -105,10 +105,20 @@ etwin-forum-post, .etwin-forum-post {
   }
 }
 
-.toolbar{
-  margin-bottom: -0.4em;
-  border-radius: 5px 5px 0 0;
-  border: solid 1px #4E4E4E;
-  border-bottom: none;
-  padding: 0.1em;
+etwin-new-forum-thread{
+  .toolbar{
+    margin-bottom: -0.5em;
+    border-radius: 5px 5px 0 0;
+    border: solid 1px #4E4E4E;
+    border-bottom: none;
+    padding: 0.2em 0.1em 0.5em 0.1em;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .preview{
+    border: dashed 2px #4E4E4E;
+    border-radius: 5px;
+    padding: 1em;
+  }
 }

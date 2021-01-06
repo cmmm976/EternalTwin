@@ -259,14 +259,20 @@
     }
   }
   
-  .toolbar .btn {
-    font-weight: normal;
-    padding: 0;
-    max-width: 2.5em;
-    width: 2.5em;
-    height: 2.5em;
-    border: none;
-    margin: 0 0.1em;
+  .toolbar{
+    .btn {
+      font-weight: normal;
+      padding: 0;
+      max-width: 2.5em;
+      width: 2.5em;
+      height: 2.5em;
+      border: none;
+      margin: 0 0.1em;
+    }
+    
+    .btn:hover{
+      transform: none !important;
+    }
   }
 }
 

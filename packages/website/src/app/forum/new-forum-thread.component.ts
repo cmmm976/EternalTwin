@@ -1,7 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { $MarktwinText, MarktwinText } from "@eternal-twin/core/lib/core/marktwin-text";
+import { renderMarktwin } from "@eternal-twin/marktwin";
+import { HtmlText } from "@eternal-twin/core/lib/core/html-text.js";
 import { ForumSection } from "@eternal-twin/core/lib/forum/forum-section";
 import { ForumSectionId } from "@eternal-twin/core/lib/forum/forum-section-id";
 import { ForumThread } from "@eternal-twin/core/lib/forum/forum-thread";
@@ -64,6 +66,8 @@ export class NewForumThreadComponent implements OnInit {
     });
     this.pendingSubscription = null;
     this.serverError = null;
+    this.showPreview = false;
+    this.preview = "";
     
     this.selectionStart = null;
   }
@@ -84,7 +88,7 @@ export class NewForumThreadComponent implements OnInit {
     }));
   }
 
-  public toggleStyle(textArea, style: string){
+  public toggleStyle(textArea: HTMLElement, style: string){
     const styleToMarktwin: object = {
       "strong": "**",
       "emphasis": "_"
@@ -122,6 +126,24 @@ export class NewForumThreadComponent implements OnInit {
     }
     
     textArea.focus();
+  }
+  
+  public onShowPreview(){
+    const mktGrammar: Grammar = {
+      admin: false,
+      depth: 4,
+      emphasis: true,
+      icons: ["etwin"],
+      links: ["http", "https"],
+      mod: true,
+      quote: false,
+      spoiler: false,
+      strikethrough: true,
+      strong: true,
+    };
+    
+    const htmlBody: HtmlText = renderMarktwin(mktGrammar, this.body.value);
+    this.preview = htmlBody;
   }
 
   public onSubmit(event: Event) {

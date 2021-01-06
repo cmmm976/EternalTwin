@@ -9,6 +9,7 @@
           action="/actions/new_thread"
           [formGroup]="newThreadForm"
           (ngSubmit)="onSubmit($event)"
+          [showPreview]="false"
         >
           <input type="hidden" name="section_id" formControlName="sectionId" required="required" [value]="section.id"/>
           <label>
@@ -27,11 +28,24 @@
             </div>
           </label>
           <label for="body" i18n="Content of the first post of the new thread@@forum.newThread.content">Body</label>
-          <div class="toolbar">
-            <button type="button" class="btn" (click)="toggleStyle(body, 'strong')"><strong>G</strong></button>
-            <button type="button" class="btn" (click)="toggleStyle(body, 'emphasis')"><em>I</em></button>
+          <button type="button" class="btn" (click)="showPreview = !showPreview" (click)="onShowPreview(preview)">
+            <span *ngIf="showPreview; then sayHide else sayShow"></span>
+            <ng-template #sayHide>Hide</ng-template>
+            <ng-template #sayShow>Show</ng-template>
+            &nbsp;preview
+          </button>
+          <div [ngSwitch]="showPreview">
+            <div *ngSwitchCase="true" class="preview" [innerHTML]="preview">
+              <!-- Will be updated when showed on screen -->
+            </div>
+            <div *ngSwitchDefault>
+              <div class="toolbar">
+                <button type="button" class="btn" (click)="toggleStyle(body, 'strong')"><strong>G</strong></button>
+                <button type="button" class="btn" (click)="toggleStyle(body, 'emphasis')"><em>I</em></button>
+              </div>
+              <textarea name="body" class="field" formControlName="body" #body></textarea>
+            </div>
           </div>
-          <textarea name="body" class="field" formControlName="body" #body></textarea>
           <div class="actionBox">
             <input type="submit" class="btn primary" name="register" [disabled]="newThreadForm.invalid || pendingSubscription !== null" i18n-value="@@forum.newThread.submit" value="Create a new thread"/>
           </div>
