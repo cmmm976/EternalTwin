@@ -7,12 +7,12 @@ import { ForumSection } from "@eternal-twin/core/lib/forum/forum-section";
 import { ForumSectionId } from "@eternal-twin/core/lib/forum/forum-section-id";
 import { ForumThread } from "@eternal-twin/core/lib/forum/forum-thread";
 import { $ForumThreadTitle, ForumThreadTitle } from "@eternal-twin/core/lib/forum/forum-thread-title";
-import { renderMarktwin } from "@eternal-twin/marktwin";
-import { Grammar } from "@eternal-twin/marktwin/lib/grammar.js";
+import { Grammar } from "@eternal-twin/marktwin/lib/grammar";
 import { NEVER as RX_NEVER, Observable, Subscription } from "rxjs";
 import { map as rxMap } from "rxjs/operators";
 
 import { ForumService } from "../../modules/forum/forum.service";
+import { MarktwinService } from "../../modules/marktwin/marktwin.service";
 
 const FORUM_SECTION_NOT_FOUND: unique symbol = Symbol("FORUM_SECTION_NOT_FOUND");
 
@@ -22,9 +22,10 @@ const FORUM_SECTION_NOT_FOUND: unique symbol = Symbol("FORUM_SECTION_NOT_FOUND")
   styleUrls: [],
 })
 export class NewForumThreadComponent implements OnInit {
-  private readonly route: ActivatedRoute;
-  private readonly forum: ForumService;
-  private readonly router: Router;
+  readonly #route: ActivatedRoute;
+  readonly #forum: ForumService;
+  readonly #marktwin: MarktwinService;
+  readonly #router: Router;
 
   public section$: Observable<ForumSection | typeof FORUM_SECTION_NOT_FOUND>;
   public readonly FORUM_SECTION_NOT_FOUND = FORUM_SECTION_NOT_FOUND;
@@ -43,12 +44,14 @@ export class NewForumThreadComponent implements OnInit {
   constructor(
     route: ActivatedRoute,
     forum: ForumService,
+    marktwin: MarktwinService,
     router: Router,
   ) {
-    this.route = route;
+    this.#route = route;
     this.section$ = RX_NEVER;
-    this.forum = forum;
-    this.router = router;
+    this.#forum = forum;
+    this.#marktwin = marktwin;
+    this.#router = router;
 
     this.title = new FormControl(
       "",
@@ -78,7 +81,7 @@ export class NewForumThreadComponent implements OnInit {
       section: ForumSection | null;
     }
 
-    const routeData$: Observable<RouteData> = this.route.data as any;
+    const routeData$: Observable<RouteData> = this.#route.data as any;
     this.section$ = routeData$.pipe(rxMap(({section}: RouteData): ForumSection | typeof FORUM_SECTION_NOT_FOUND => {
       if (section !== null) {
         this.sectionId.setValue(section.id);
@@ -143,7 +146,7 @@ export class NewForumThreadComponent implements OnInit {
       strong: true,
     };
 
-    const htmlBody: HtmlText = renderMarktwin(mktGrammar, this.body.value);
+    const htmlBody: HtmlText = this.#marktwin.renderMarktwin(mktGrammar, this.body.value);
     this.preview = htmlBody;
   }
 
@@ -156,13 +159,13 @@ export class NewForumThreadComponent implements OnInit {
     const title: ForumThreadTitle = model.title;
     const body: MarktwinText = model.body;
     const sectionId: ForumSectionId = model.sectionId;
-    const thread$ = this.forum.createThread(sectionId, {title, body});
+    const thread$ = this.#forum.createThread(sectionId, {title, body});
     this.serverError = null;
     const subscription: Subscription = thread$.subscribe({
       next: (thread: ForumThread): void => {
         subscription.unsubscribe();
         this.pendingSubscription = null;
-        this.router.navigate(["", "forum", "threads", thread.id]);
+        this.#router.navigate(["", "forum", "threads", thread.id]);
       },
       error: (err: Error): void => {
         subscription.unsubscribe();
