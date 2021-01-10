@@ -130,12 +130,18 @@ etwin-new-forum-thread{
     display: flex;
     flex-direction: row;
     background: $deepBlack;
-    padding: 0.2em 0.1em 0.5em 0.1em;
+    padding: .2em .1em;
     border-radius: .25em .25em 0 0;
 
     button {
       color: $lightGrey;
+      font-family: 'fontello';
+      font-size: 1.5em;
+      padding: .2em .5em;
       cursor: pointer;
+      speak: never; //for accessibility
+
+      transition: all .1s;
 
       &:hover, &:focus { color: $lightWhite }
     }
