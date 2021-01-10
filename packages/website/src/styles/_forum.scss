@@ -111,18 +111,28 @@ etwin-new-forum-thread { //new thread style
     color: $lightWhite;
     background-color: $darkGrey;
     margin: .4em 0 .25em 0;
-    padding: 1px;
+    padding: 2px;
     border-radius: .25em;
     outline: none;
     box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
-
+    
+    &:hover, &:focus, &:active {
+      box-shadow: inset 0 0 0 2px $lightViolet;
+    }
 
     textarea.field {
+      display: block;
       box-shadow: none !important;
-      background: none !important;
-      margin: 1px;
+      background: none;
+      margin: 0;
       border-radius: 0 0 .25em .25em;
+      border-top: 1px solid transparent;
 
+      transition: border .25s;
+
+      &:focus, &:active {
+        border-top: 1px solid transparentize($lightViolet, .5);
+      }
     }
   }
 
@@ -144,6 +154,7 @@ etwin-new-forum-thread { //new thread style
       transition: all .1s;
 
       &:hover, &:focus { color: $lightWhite }
+    }
 
       .show-preview {
         border-left: solid 1px $darkGrey;
