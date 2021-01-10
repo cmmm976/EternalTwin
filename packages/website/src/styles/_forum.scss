@@ -156,9 +156,8 @@ etwin-new-forum-thread { //new thread style
       &:hover, &:focus { color: $lightWhite }
     }
 
-      .show-preview {
-        border-left: solid 1px $darkGrey;
-      }
+    .show-preview {
+      border-left: solid 1px $darkGrey;
     }
 
     .tools {
