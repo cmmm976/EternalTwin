@@ -51,13 +51,19 @@ declare_scraper_tests! {
   profile(profile__fr_user127_guest);
   profile(profile__fr_user176431_user176431);
   profile(profile__fr_user9999999_user127);
+
+  inventory(inventory__en_user209170_00_one_coin);
+  inventory(inventory__en_user209170_01_coin_and_crystals);
+  inventory(inventory__fr_user127);
+  inventory(inventory__fr_user1041317);
 }
 
 mod tests_helpers {
   use super::*;
 
-  pub static RESOURCES_ROOT: Lazy<PathBuf> =
-    Lazy::new(|| PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("test-resources/scraping"));
+  pub static RESOURCES_ROOT: Lazy<PathBuf> = Lazy::new(|| {
+    PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("../../test-resources/scraping/hammerfest")
+  });
 
   // Converts a test function name into a path: `__` becomes `/`, and `_` becomes `-`.
   pub fn parse_path_from_fn_name(root: &Path, name: &str) -> PathBuf {
@@ -130,5 +136,9 @@ mod tests_impl {
     tests_helpers::test_scraper(path, |options: Options, html| {
       scraper::scrape_user_profile(options.server, options.user_id, html)
     });
+  }
+
+  pub fn inventory(path: PathBuf) {
+    tests_helpers::test_scraper(path, |_options: (), html| scraper::scrape_user_inventory(html));
   }
 }

@@ -23,12 +23,12 @@ type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 const USER_AGENT: &str = "EtwinHammerfestScraper";
 const TIMEOUT: Duration = Duration::from_millis(5000);
 
-pub struct HammerfestClientHttp<TyClock> {
+pub struct HttpHammerfestClient<TyClock> {
   client: Client,
   clock: TyClock,
 }
 
-impl<TyClock> HammerfestClientHttp<TyClock>
+impl<TyClock> HttpHammerfestClient<TyClock>
 where
   TyClock: Clock,
 {
@@ -63,7 +63,7 @@ where
 }
 
 #[async_trait]
-impl<TyClock> HammerfestClient for HammerfestClientHttp<TyClock>
+impl<TyClock> HammerfestClient for HttpHammerfestClient<TyClock>
 where
   TyClock: Clock,
 {
@@ -82,7 +82,7 @@ where
       .post(urls.login())
       .form(&LoginForm {
         login: options.username.as_str(),
-        pass: &options.password,
+        pass: options.password.as_str(),
       })
       .send()
       .await?;
@@ -150,8 +150,10 @@ where
     )?)
   }
 
-  async fn get_own_items(&self, _session: &HammerfestSession) -> Result<HashMap<HammerfestItemId, u32>> {
-    Err(UnimplementedError::new("http", "get_own_items").into())
+  async fn get_own_items(&self, session: &HammerfestSession) -> Result<HashMap<HammerfestItemId, u32>> {
+    let urls = HammerfestUrls::new(session.user.server);
+    let html = self.get_html(urls.inventory(), Some(&session.key)).await?;
+    scraper::scrape_user_inventory(&html)?.ok_or_else(|| ScraperError::InvalidSessionCookie.into())
   }
 
   async fn get_own_god_children(&self, _session: &HammerfestSession) -> Result<Vec<HammerfestGodChild>> {
@@ -190,3 +192,6 @@ where
     Err(UnimplementedError::new("http", "create_session").into())
   }
 }
+
+#[cfg(feature = "neon")]
+impl<TyClock> neon::prelude::Finalize for HttpHammerfestClient<TyClock> where TyClock: Clock {}
