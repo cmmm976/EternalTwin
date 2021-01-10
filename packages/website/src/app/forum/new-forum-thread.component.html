@@ -28,47 +28,49 @@
             </div>
           </label>
           <label for="body" i18n="Content of the first post of the new thread@@forum.newThread.content">Body</label>
-          <button type="button" class="btn" (click)="showPreview = !showPreview" (click)="onShowPreview(preview)">
-            <span *ngIf="showPreview; then sayHide else sayShow"></span>
-            <ng-template #sayHide>Hide</ng-template>
-            <ng-template #sayShow>Show</ng-template>
-            &nbsp;preview
-          </button>
           <div class="editor-container" [ngSwitch]="showPreview">
-            <div *ngSwitchCase="true" class="preview" [innerHTML]="preview">
+            <div class="preview">
               <!-- Will be updated when showed on screen -->
+              <button class="hide-preview" type="button" (click)="showPreview = !showPreview" (click)="onShowPreview(preview)" >
+                Hide preview
+              </button>
             </div>
             <div class="editor" *ngSwitchDefault>
               <div class="toolbar">
-                <button class="strong" type="button" (click)="toggleStyle(body, 'strong')" alt="strong">
-                  &#xe800;
-                </button>
-                <button class="italic" type="button" (click)="toggleStyle(body, 'emphasis')" alt="italic">
-                  &#xe801;
-                </button>
-                <button class="striketrough" alt="striketrough">
-                  &#xe802;
-                </button>
-                <button class="link" alt="link">
-                  &#xe803;
-                </button>
-                <button class="quote" alt="quote">
-                  &#xe804;
-                </button>
-                <button class="spoiler" alt="spoiler">
-                  &#xe805;
-                </button>
-                <button class="aside" alt="aside">
-                  &#xe806;
-                </button>
-                <button class="roleplay" alt="roleplay">
-                  &#xe807;
-                </button>
-                <button class="user" alt="user">
-                  &#xe808;
-                </button>
-                <button class="question" alt="question">
-                  &#xe809;
+                <div class="tools">
+                  <button class="strong" type="button" (click)="toggleStyle(body, 'strong')" alt="strong">
+                    &#xe800;
+                  </button>
+                  <button class="italic" type="button" (click)="toggleStyle(body, 'emphasis')" alt="italic">
+                    &#xe801;
+                  </button>
+                  <button class="striketrough" alt="striketrough">
+                    &#xe802;
+                  </button>
+                  <button class="link" alt="link">
+                    &#xe803;
+                  </button>
+                  <button class="quote" alt="quote">
+                    &#xe804;
+                  </button>
+                  <button class="spoiler" alt="spoiler">
+                    &#xe805;
+                  </button>
+                  <button class="aside" alt="aside">
+                    &#xe806;
+                  </button>
+                  <button class="roleplay" alt="roleplay">
+                    &#xe807;
+                  </button>
+                  <button class="user" alt="user">
+                    &#xe808;
+                  </button>
+                  <button class="question" alt="question">
+                    &#xe809;
+                  </button>
+                </div>
+                <button class="show-preview" type="button" (click)="showPreview = !showPreview" (click)="onShowPreview(preview)">
+                  preview
                 </button>
               </div>
               <textarea name="body" class="field" formControlName="body" #body></textarea>
