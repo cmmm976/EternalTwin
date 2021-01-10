@@ -34,14 +34,42 @@
             <ng-template #sayShow>Show</ng-template>
             &nbsp;preview
           </button>
-          <div [ngSwitch]="showPreview">
+          <div class="editor-container" [ngSwitch]="showPreview">
             <div *ngSwitchCase="true" class="preview" [innerHTML]="preview">
               <!-- Will be updated when showed on screen -->
             </div>
-            <div *ngSwitchDefault>
+            <div class="editor" *ngSwitchDefault>
               <div class="toolbar">
-                <button type="button" class="btn" (click)="toggleStyle(body, 'strong')"><strong>G</strong></button>
-                <button type="button" class="btn" (click)="toggleStyle(body, 'emphasis')"><em>I</em></button>
+                <button class="strong" type="button" (click)="toggleStyle(body, 'strong')">
+                  Strong
+                </button>
+                <button class="italic" type="button" (click)="toggleStyle(body, 'emphasis')">
+                  Italic
+                </button>
+                <button class="striketrough">
+                  Striketrough
+                </button>
+                <button class="link">
+                  Link
+                </button>
+                <button class="quote">
+                  Quote
+                </button>
+                <button class="spoiler">
+                  Spoiler
+                </button>
+                <button class="aside">
+                  Aside
+                </button>
+                <button class="roleplay">
+                  Roleplay
+                </button>
+                <button class="user">
+                  User
+                </button>
+                <button class="question">
+                  Question
+                </button>
               </div>
               <textarea name="body" class="field" formControlName="body" #body></textarea>
             </div>
