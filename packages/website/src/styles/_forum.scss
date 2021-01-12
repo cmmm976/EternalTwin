@@ -116,8 +116,15 @@ etwin-new-forum-thread { //new thread style
     outline: none;
     box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
     
-    &:hover, &:focus, &:active {
+    &:hover, &:focus, &:focus-within, &:active {
       box-shadow: inset 0 0 0 2px $lightViolet;
+    }
+
+    &:focus, &:focus-within, &:active {
+      textarea.field {
+        background-color: $deepViolet;
+        border-top: 1px solid transparentize($lightViolet, .5);
+      }
     }
 
     textarea.field {
@@ -128,11 +135,7 @@ etwin-new-forum-thread { //new thread style
       border-radius: 0 0 .25em .25em;
       border-top: 1px solid transparent;
 
-      transition: border .25s;
-
-      &:focus, &:active {
-        border-top: 1px solid transparentize($lightViolet, .5);
-      }
+      transition: all .1s, border .25s;
     }
   }
 
@@ -157,19 +160,78 @@ etwin-new-forum-thread { //new thread style
     }
 
     .show-preview {
-      border-left: solid 1px $darkGrey;
+      border-right: solid 2px $darkGrey;
     }
 
     .tools {
       flex: 1;
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+      justify-content: flex-end;
     
       button {
-        font-family: 'fontello';
-        font-size: 1.5em;
+        position: relative;
+        display: flex;
+        span.icon {
+          font-family: 'fontello';
+          font-size: 1.5em;
+          speak: never; //for accessibility
+        }
+        
+        &.more {
+          flex-direction: column;
+          align-items: center;
+          span:not(.icon) {
+            font-size: .85em;
+            letter-spacing: .04em;
+            font-weight: 700;
+          }
+          .icon { margin: -.45em; padding-top: .2em; }
+        }
 
-        speak: never; //for accessibility
+        //variables for the tooltip/name display animation :
+        $tt-speed: .1s;
+        $tt-delay: .25s;
 
-        &:first-child { border-left-width: 0; }
+        .name {
+          visibility: hidden;
+          opacity: 0;
+          position: absolute;
+          pointer-events: none;
+          left: 50%;
+          transform: translateX(-50%);
+          top: -2em;
+          padding: .25em .7em;
+          color: $lightWhite;
+          background: $mediumViolet;
+          border-radius: 4px;
+          font-size: .85em;
+          letter-spacing: .04em;
+          box-shadow: 0 0 5px 0 $deepBlack;
+
+          transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
+
+          &::after {
+            content:"";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: $mediumViolet transparent transparent transparent;
+          }
+        }
+
+        &:hover, &:focus, &:active {
+          .name {
+            visibility: visible;
+            opacity: 1;
+
+            transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
+          }
+        }
       }
     }
   }
@@ -196,7 +258,7 @@ etwin-new-forum-thread { //new thread style
       padding: .3em .4em;
       border: 0;
       position: absolute;
-      right: 12px;
+      left: 12px;
       top: -14px;
       background: $deepGrey; //same as the background
       cursor: pointer;
@@ -206,7 +268,6 @@ etwin-new-forum-thread { //new thread style
   @media only screen and (max-width: $contentWidth) {
     .toolbar .tools button {
       padding: .1em .55em;
-      font-size: 1.4em;
     }
   }
 }
