@@ -107,6 +107,51 @@ etwin-forum-post, .etwin-forum-post {
 
 etwin-new-forum-thread { //new thread style
 
+  .toolbar button {
+    $tt-speed: .1s;
+    $tt-delay: .25s;
+    
+    .name {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      pointer-events: none;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -2em;
+      margin: 0;
+      padding: .25em .7em;
+      color: $lightWhite;
+      background: $mediumViolet;
+      border-radius: 4px;
+      font-size: .85em;
+      letter-spacing: .04em;
+      box-shadow: 0 0 5px 0 $deepBlack;
+
+      transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
+
+      &::after {
+        content:"";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: $mediumViolet transparent transparent transparent;
+      }
+    }
+
+    &:hover, &:focus, &:active {
+      .name {
+        visibility: visible;
+        opacity: 1;
+
+        transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
+      }
+    }
+  }
+
   .editor {
     color: $lightWhite;
     background-color: $darkGrey;
@@ -141,7 +186,7 @@ etwin-new-forum-thread { //new thread style
 
   form { max-width: 712px; }
   
-  .toolbar {
+  .toolbar, .toolbar-extended {
     display: flex;
     flex-direction: row;
     background: $deepBlack;
@@ -149,7 +194,7 @@ etwin-new-forum-thread { //new thread style
     border-radius: .25em .25em 0 0;
 
     .tools button, .show-preview {
-      margin: .1em 0;
+      margin: .15em 0;
       padding: .1em .75em;
       color: $lightGrey;
       cursor: pointer;
@@ -169,13 +214,16 @@ etwin-new-forum-thread { //new thread style
       flex-flow: row wrap;
       align-items: center;
       justify-content: flex-end;
-    
+
       button {
         position: relative;
         display: flex;
-        span.icon {
+
+        span.icon, span.icon:before {
+          position: relative;
           font-family: 'fontello';
           font-size: 1.5em;
+          line-height: 1;
           speak: never; //for accessibility
         }
         
@@ -189,49 +237,44 @@ etwin-new-forum-thread { //new thread style
           }
           .icon { margin: -.45em; padding-top: .2em; }
         }
+      }
+    }
+  }  
 
-        //variables for the tooltip/name display animation :
-        $tt-speed: .1s;
-        $tt-delay: .25s;
+  .toolbar-extended {
+    flex-direction: column;
 
-        .name {
-          visibility: hidden;
-          opacity: 0;
+    .tools {
+      padding: .3em 0;
+      border-top: 2px solid $darkGrey;
+      justify-content: flex-start;
+
+      button {
+        align-items: center;
+
+        .name { margin-left: .15em; }
+      }
+
+      &.flags button {
+        .icon:before {
+          content: "\e80d";
           position: absolute;
-          pointer-events: none;
-          left: 50%;
-          transform: translateX(-50%);
-          top: -2em;
-          padding: .25em .7em;
-          color: $lightWhite;
-          background: $mediumViolet;
-          border-radius: 4px;
-          font-size: .85em;
-          letter-spacing: .04em;
-          box-shadow: 0 0 5px 0 $deepBlack;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          font-size: 1em;
+          opacity: .7;
 
-          transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
-
-          &::after {
-            content:"";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -6px;
-            border-width: 6px;
-            border-style: solid;
-            border-color: $mediumViolet transparent transparent transparent;
-          }
+          transition: all .1s;
         }
 
-        &:hover, &:focus, &:active {
-          .name {
-            visibility: visible;
-            opacity: 1;
+        &:hover, &:focus { .icon:before { opacity: 1; }}
 
-            transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
-          }
-        }
+        &.admin      .icon:before { color: #f7ca58; }
+        &.moderation .icon:before { color: #d11a26; }
+        &.animation  .icon:before { color: #5bd87c; }
+        &.notice     .icon:before { color: #68b8cd; }
       }
     }
   }
@@ -266,8 +309,60 @@ etwin-new-forum-thread { //new thread style
   }
 
   @media only screen and (max-width: $contentWidth) {
-    .toolbar .tools button {
-      padding: .1em .55em;
+    .toolbar, .toolbar-extended {
+      .tools button {
+        padding: .1em .55em;
+      }
+    }
+  }
+
+  @media only screen and (max-width: $contentWidth / 2) {
+    .toolbar, .toolbar-extended {
+      .tools button {
+
+        $tt-speed: .1s;
+        $tt-delay: .25s;
+        
+        .name {
+          visibility: hidden;
+          opacity: 0;
+          position: absolute;
+          pointer-events: none;
+          left: 50%;
+          transform: translateX(-50%);
+          top: -2em;
+          margin: 0;
+          padding: .25em .55em;
+          color: $lightWhite;
+          background: $mediumViolet;
+          border-radius: 4px;
+          font-size: .85em;
+          letter-spacing: .04em;
+          box-shadow: 0 0 5px 0 $deepBlack;
+    
+          transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
+    
+          &::after {
+            content:"";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: $mediumViolet transparent transparent transparent;
+          }
+        }
+    
+        &:hover, &:focus, &:active {
+          .name {
+            visibility: visible;
+            opacity: 1;
+    
+            transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
+          }
+        }
+      }
     }
   }
 }

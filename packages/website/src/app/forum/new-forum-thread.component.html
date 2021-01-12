@@ -83,6 +83,73 @@
                   </button>
                 </div>
               </div>
+
+              <div class="toolbar-extended">
+                <div class="tools">
+                  <button class="strong" type="button" (click)="toggleStyle(body, 'strong')" alt="strong">
+                    <span class="icon">&#xe800;</span>
+                    <span class="name">strong</span>
+                  </button>
+                  <button class="italic" type="button" (click)="toggleStyle(body, 'emphasis')" alt="italic">
+                    <span class="icon">&#xe801;</span>
+                    <span class="name">italic</span>
+                  </button>
+                  <button class="underline" alt="underline">
+                    <span class="icon">&#xe802;</span>
+                    <span class="name">underline</span>
+                  </button>
+                  <button class="striketrough" alt="striketrough">
+                    <span class="icon">&#xe803;</span>
+                    <span class="name">striketrough</span>
+                  </button>
+                  <button class="quote" alt="quote">
+                    <span class="icon">&#xe804;</span>
+                    <span class="name">quote</span>
+                  </button>
+                  <button class="spoiler" alt="spoiler">
+                    <span class="icon">&#xe805;</span>
+                    <span class="name">spoiler</span>
+                  </button>
+                  <button class="aside" alt="aside">
+                    <span class="icon">&#xe806;</span>
+                    <span class="name">aside</span>
+                  </button>
+                  <button class="roleplay" alt="roleplay">
+                    <span class="icon">&#xe807;</span>
+                    <span class="name">roleplay</span>
+                  </button>
+                  <button class="link" alt="link">
+                    <span class="icon">&#xe808;</span>
+                    <span class="name">link</span>
+                  </button>
+                  <button class="player" alt="player">
+                    <span class="icon">&#xe809;</span>
+                    <span class="name">player</span>
+                  </button>
+                  <button class="question" alt="question">
+                    <span class="icon">&#xe80a;</span>
+                    <span class="name">question</span>
+                  </button>
+                </div>
+                <div class="tools flags">
+                  <button class="admin" alt="admin">
+                    <span class="icon">&#xe80c;</span>
+                    <span class="name">Admin</span>
+                  </button>
+                  <button class="moderation" alt="moderation">
+                    <span class="icon">&#xe80c;</span>
+                    <span class="name">Modération</span>
+                  </button>
+                  <button class="animation" alt="animation">
+                    <span class="icon">&#xe80c;</span>
+                    <span class="name">Animation</span>
+                  </button>
+                  <button class="notice" alt="notice">
+                    <span class="icon">&#xe80c;</span>
+                    <span class="name">Annonce</span>
+                  </button>
+                </div>
+              </div>
               <textarea name="body" class="field" formControlName="body" #body></textarea>
             </div>
           </div>
