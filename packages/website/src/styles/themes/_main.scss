@@ -334,7 +334,7 @@ label {
   }
 
   textarea.field {
-    min-height: 30vh;
+    height: 20vh;
   }
 }
 
@@ -343,6 +343,7 @@ textarea {
   width: 100%;
   resize: vertical;
   min-height: 2em;
+  line-height: 1.4em;
 }
 
 

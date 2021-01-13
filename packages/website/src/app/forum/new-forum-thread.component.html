@@ -38,7 +38,9 @@
             <div *ngSwitchDefault>
               <div [ngSwitch]="extendedEditor" class="editor">
                 <div class="toolbar">
-                  <button type="button" class="show-preview" (click)="onShowPreview(preview)" (click)="showPreview = !showPreview">preview</button>
+                  <div class="tools show-preview">
+                    <button type="button" (click)="onShowPreview(preview)" (click)="showPreview = !showPreview">preview</button>
+                  </div>
                   <div class="tools">
                     <div *ngSwitchDefault>
                       <button class="strong" type="button" (click)="toggleStyle(body, 'strong')" alt="strong">
