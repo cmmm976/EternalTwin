@@ -40,6 +40,7 @@ export class NewForumThreadComponent implements OnInit {
   public serverError: Error | null;
   public preview: string;
   public showPreview: boolean;
+  public extendedEditor: boolean;
 
   constructor(
     route: ActivatedRoute,
@@ -73,6 +74,7 @@ export class NewForumThreadComponent implements OnInit {
     this.pendingSubscription = null;
     this.serverError = null;
     this.showPreview = false;
+    this.extendedEditor = false;
     this.preview = "";
   }
 

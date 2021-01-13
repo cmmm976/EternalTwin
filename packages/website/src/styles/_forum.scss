@@ -174,6 +174,7 @@ etwin-new-forum-thread { //new thread style
 
     textarea.field {
       display: block;
+      min-height: 25vh;
       box-shadow: none !important;
       background: none;
       margin: 0;
@@ -185,6 +186,11 @@ etwin-new-forum-thread { //new thread style
   }
 
   form { max-width: 712px; }
+
+  .toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   
   .toolbar, .toolbar-extended {
     display: flex;
@@ -193,49 +199,50 @@ etwin-new-forum-thread { //new thread style
     padding: .2em .15em;
     border-radius: .25em .25em 0 0;
 
-    .tools button, .show-preview {
-      margin: .15em 0;
-      padding: .1em .75em;
-      color: $lightGrey;
-      cursor: pointer;
-
-      transition: all .1s;
-
-      &:hover, &:focus { color: $lightWhite }
-    }
-
-    .show-preview {
-      border-right: solid 2px $darkGrey;
-    }
-
     .tools {
-      flex: 1;
       display: flex;
       flex-flow: row wrap;
       align-items: center;
       justify-content: flex-end;
 
-      button {
-        position: relative;
-        display: flex;
+      & > div { display: flex; }
+    }
 
-        span.icon, span.icon:before {
-          position: relative;
-          font-family: 'fontello';
-          font-size: 1.5em;
-          line-height: 1;
-          speak: never; //for accessibility
-        }
-        
-        &.more {
-          flex-direction: column;
-          align-items: center;
-          span:not(.icon) {
-            font-size: .85em;
-            letter-spacing: .04em;
-            font-weight: 700;
-          }
-          .icon { margin: -.45em; padding-top: .2em; }
+    button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin: .15em 0;
+      padding: .1em .75em;
+      color: $lightGrey;
+      cursor: pointer;
+      outline: none;
+
+      transition: all .1s;
+
+      &:hover, &:focus { color: $lightWhite }
+
+      span.icon, span.icon:before {
+        position: relative;
+        font-family: 'fontello';
+        font-size: 1.5em;
+        line-height: 1;
+        speak: never; //for accessibility
+      }
+
+      &.show-preview {
+        padding: .1em 2em;
+        font-weight: 700;
+      }
+
+      &.extend {
+        letter-spacing: .02em;
+        span:not(.icon) { font-size: .92em; }
+        .icon { 
+          margin: -.25em;
+          padding: 0 .15em;
+          &.more { transform: translateY(.1em); }
+          &.less { transform: rotate(180deg); }
         }
       }
     }
@@ -280,6 +287,8 @@ etwin-new-forum-thread { //new thread style
   }
 
   .show-preview, .hide-preview {
+    flex: 1;
+    justify-content: center;
     text-transform: uppercase;
     letter-spacing: 0.02em;
     color: $lightGrey;
@@ -306,6 +315,10 @@ etwin-new-forum-thread { //new thread style
       background: $deepGrey; //same as the background
       cursor: pointer;
     }
+  }
+
+  @media only screen and (orientation: landscape) {
+    .content textarea.field { min-height: 40vh; }
   }
 
   @media only screen and (max-width: $contentWidth) {
@@ -363,6 +376,12 @@ etwin-new-forum-thread { //new thread style
           }
         }
       }
+    }
+
+    .toolbar {
+      flex-direction: column;
+
+      .tools div button:nth-child(1n + 5) { display: none; } //hide all buttons from the fifth
     }
   }
 }
