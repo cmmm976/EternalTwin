@@ -331,3 +331,136 @@ etwin-new-forum-thread {
     .tools div button:nth-child(1n + 5) { display: none; } //hide all buttons from the fifth
   }
 }
+
+
+
+.emote-picker-container {
+  background-color: $deepGrey;
+  margin: .4em 0 .25em 0;
+  border-radius: .25em;
+  border: 1px solid $mediumGrey;
+
+  .finder {
+    padding: .3em;
+    background: $deepBlack;
+    border-radius: .25em .25em 0 0;
+    
+    textarea {
+      font-size: .9em;
+      padding: .3em .5em;
+      color: $lightGrey;
+      background: $darkGrey;
+      border: none;
+      border-radius: 3px;
+      resize: none;
+
+      transition: all .2s;
+
+      &:hover, &:focus, &:active {
+        box-shadow: inset 0 0 0 1px $lightGrey;
+        outline: none;
+      }
+
+      &:focus, &:active { color: $lightWhite; }
+    }
+    
+    .categories {
+      display: flex;
+      flex-flow: row wrap;
+    }
+
+    a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      margin: 2px;
+      padding: auto;
+      background: lighten($darkGrey, 5);
+      border-radius: 50%;
+
+      transition: all .15s;
+
+      &::after {
+        position: absolute;
+        content: "";
+        height: 9px;
+        width: 9px;
+        bottom: -3px;
+        left: 3px;
+        background: url(https://data.twinoid.com/img/design/arrowDrop.png) center no-repeat;
+
+        transition: all .15s;
+      }
+
+      &:hover, &:focus, &:active {
+        background: $mediumGrey;
+      }
+
+      &:focus, &:active {
+        &::after {
+          bottom: -7px;
+        }
+      }
+    }
+  }
+
+  .list {
+    height: 160px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    margin: .25em;
+    padding: 0 .3em;
+
+    // SCROLLBAR STYLING
+    scrollbar-width: thin;
+    scrollbar-color: $lightViolet $darkGrey;
+    &::-webkit-scrollbar { width: 8px; }
+    &::-webkit-scrollbar-track { background: $darkGrey; border-radius: 2px; }
+    &::-webkit-scrollbar-thumb { background-color: $lightViolet; border-radius: 2px; }
+
+    h3 {
+      margin: 0.6em 0 .1em 0;
+      color: $lightViolet;
+      font-size: .7em;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    div {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: flex-start;
+
+      button {
+        display: flex;
+        align-items: center;
+        color: $lightGrey;
+        font-size: .85em;
+        letter-spacing: .01em;
+        padding: 2px;
+        border-radius: 3px;
+        cursor: pointer;
+
+        transition: all .15s;
+
+        img {
+          max-width: 24px;
+
+          &:not(:only-child) {
+            margin-right: .2em;
+          }
+        }
+
+        &:hover, &:focus, &:active {
+          color: $lightWhite;
+          background: $mediumGrey;
+        }
+      }
+    }
+  }
+}
+
