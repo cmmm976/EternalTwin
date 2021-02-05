@@ -1,0 +1,103 @@
+/* Create a tooltip element that appears ontop the item on hover/active/focus
+the default content of the tooltip is taken from the "tooltip" attribute of the item.
+Change the '$content' variable to pick another attribute, or any element within the item by its class name.
+*/
+@mixin tooltip($content: attr(tooltip), $font-color: $lightWhite, $bg-color: $deepBlack, $font-size: .9em, $distance: 8px) {
+  $tt-speed: .1s;
+  $tt-delay: .25s;
+
+  @if str-index($content, "attr") {
+    &::before {
+      content: $content;
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      left: 50%;
+      transform: translate(-50%, -100%);
+      top: - $distance;
+      margin: 0;
+      padding: .25em .7em;
+      color: $font-color;
+      background: $bg-color;
+      border-radius: 4px;
+      font-size: .9em;
+      font-weight: 700;
+      letter-spacing: .04em;
+      line-height: 1.4em;
+      white-space: nowrap;
+      box-shadow: 0 0 5px 0 $deepBlack;
+  
+      transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
+    }
+
+    &::after { //triangle
+      content:"";
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      top: - $distance - 1px;
+      left: 50%;
+      margin-left: -6px;
+      border-width: 6px;
+      border-style: solid;
+      border-color: $bg-color transparent transparent transparent;
+    }
+
+    &:hover, &:focus, &:active {
+      &::before, &::after {
+        visibility: visible;
+        opacity: 1;
+
+        transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
+      }
+    }
+  }
+
+  @else {
+    .#{$content} {
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      left: 50%;
+      transform: translate(-50%, -100%);
+      top: - $distance;
+      margin: 0;
+      padding: .25em .7em;
+      color: $font-color;
+      background: $bg-color;
+      border-radius: 4px;
+      font-size: .9em;
+      font-weight: 700;
+      letter-spacing: .04em;
+      line-height: 1.4em;
+      white-space: nowrap;
+      box-shadow: 0 0 5px 0 $deepBlack;
+  
+      transition: visibility 0s $tt-speed, opacity $tt-speed 0s, top $tt-speed 0s;
+
+      &::after { //triangle
+        content:"";
+        position: absolute;
+        pointer-events: none;
+        bottom: -11px;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: $bg-color transparent transparent transparent;
+      }
+    }
+
+    &:hover, &:focus, &:active {
+      .#{$content} {
+        visibility: visible;
+        opacity: 1;
+
+        transition: visibility 0s $tt-delay, opacity $tt-speed $tt-delay, top $tt-speed $tt-delay;
+      }
+    }
+  }
+}
