@@ -46,26 +46,27 @@ body {
 
 
   .spoiler {
-    $strokes-color: lighten($darkGrey, 12%);
+    $strokes-color-1: transparentize($deepBlack, .7);
+    $strokes-color-2: lighten($darkGrey, 12%);
 
     //display: inline;    intercompatibility to confirm
     text-align: inherit;
     cursor: pointer;
     padding: 0 .2em;
     border-radius: .25em;
-    background-color: $deepBlack;
+    //background-color: $deepBlack;   should not be required
     background-image: linear-gradient(135deg,
-    transparent 22%,
-    $strokes-color 22%,
-    $strokes-color 50%,
-    transparent 50%,
-    transparent 72%,
-    $strokes-color 72%,
-    $strokes-color 100%);   /*diagonal gradient to create a stripes effect background*/
+    $strokes-color-1 22%,
+    $strokes-color-2 22%,
+    $strokes-color-2 50%,
+    $strokes-color-1 50%,
+    $strokes-color-1 72%,
+    $strokes-color-2 72%,
+    $strokes-color-2 100%);   /*diagonal gradient to create a stripes effect background*/
     background-size: 12px 12px;
     line-height: 1.5;
     color: transparent;
-    box-shadow: inset 0 -1px 0 0 $strokes-color;
+    box-shadow: inset 0 -1px 0 0 $strokes-color-2;
     outline: none;
 
     * { visibility: hidden; }
@@ -86,10 +87,6 @@ body {
         background: inherit;
       }
     }
-  }
-
-  p.spoiler {
-    display: inline-block;
   }
   
   @mixin styles-imbrication {
@@ -129,6 +126,8 @@ body {
   }
 
   span.roleplay {
+    $border-color: #86673c;
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -140,9 +139,9 @@ body {
       min-width: 35%;
       margin: .5em 1em 0;
       padding: .4em .6em;
-      border-radius: .45em;
-      background: $darkGrey;
-      border: 1px solid darken(#eece93, 40%);
+      border-radius: .6em;
+      background: desaturate(darken($border-color, 25%), 35%);
+      border: 1px solid $border-color; 
       border-bottom-width: 3px;
 
       &::before {
@@ -155,7 +154,7 @@ body {
         height: 0;
         border-style: solid;
         border-width: 0 $triangle-size $triangle-size $triangle-size;
-        border-color: transparent transparent darken(#eece93, 40%) transparent;
+        border-color: transparent transparent $border-color transparent;
       }
     }
 
@@ -163,7 +162,7 @@ body {
       display: flex;
       align-items: center;
       position: relative;
-      color: #eece93;
+      color: lighten($border-color, 35%); // #eece93;
       font-size: .82em;
       letter-spacing: .04em;
       font-weight: $fontWeightBold;
@@ -269,6 +268,58 @@ body {
       }
     
       &::before { background: url("/assets/icons/friend.svg") center no-repeat; }
+    }
+  }
+
+  p.moderation-flag, p.announcement-flag, p.admin-flag {
+    padding: 1.2em .8em;
+    border: 1px solid transparent;
+    border-bottom-width: 3px;
+    border-radius: .2em;
+
+    @include styles-imbrication;
+  }
+
+  p.moderation-flag {
+    border-color: $red;
+    background: $darkRed;
+
+    &::before {
+      content: "Message d'un modérateur";
+      display: block;
+      margin-bottom: .4em;
+      padding-left: 18px;
+      color: lighten($orange, 45%);
+      font-weight: $fontWeightBold;
+      letter-spacing: .04em;
+      background: url("/assets/icons/warning.png") center left no-repeat;
+    }
+  }
+
+  p.announcement-flag {
+    border-color: $lightViolet;
+    background-color: $darkViolet;
+    background-image: url("/assets/icons/announcement-flag-bg.svg");
+    background-position:  bottom left;
+    background-repeat: no-repeat;
+  }
+
+  p.admin-flag {
+    border-color: $orange;
+    background-color: $deepBlack;
+    background-image: url("/assets/icons/admin-flag-bg.svg");
+    background-position:  top left;
+    background-repeat: no-repeat;
+
+    &::before {
+      content: "Message officiel d'un administrateur";
+      display: block;
+      margin-bottom: .4em;
+      padding-left: 22px;
+      color: lighten($orange, 45%);
+      font-weight: $fontWeightBold;
+      letter-spacing: .04em;
+      background: url("/assets/icons/adminAnnounce.png") center left no-repeat;
     }
   }
 }
