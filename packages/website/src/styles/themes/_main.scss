@@ -36,8 +36,240 @@ body {
     letter-spacing: 0.01em;
   }
 
-  .strikethrough {
+  span.strikethrough, p.strikethrough {
     text-decoration: line-through;
+  }
+
+  span.underline, p.underline {
+    text-decoration: underline;
+  }
+
+
+  .spoiler {
+    $strokes-color: lighten($darkGrey, 12%);
+
+    //display: inline;    intercompatibility to confirm
+    text-align: inherit;
+    cursor: pointer;
+    padding: 0 .2em;
+    border-radius: .25em;
+    background-color: $deepBlack;
+    background-image: linear-gradient(135deg,
+    transparent 22%,
+    $strokes-color 22%,
+    $strokes-color 50%,
+    transparent 50%,
+    transparent 72%,
+    $strokes-color 72%,
+    $strokes-color 100%);   /*diagonal gradient to create a stripes effect background*/
+    background-size: 12px 12px;
+    line-height: 1.5;
+    color: transparent;
+    box-shadow: inset 0 -1px 0 0 $strokes-color;
+    outline: none;
+
+    * { visibility: hidden; }
+
+    &::selection {
+      color: transparent;
+      background: none;
+    }
+
+    &:active, &:focus {
+      background: transparentize($lightWhite, .9);
+      color: darken($lightWhite, 10%);
+
+      * { visibility: initial; }
+
+      &::selection {
+        color: inherit;
+        background: inherit;
+      }
+    }
+  }
+
+  p.spoiler {
+    display: inline-block;
+  }
+  
+  @mixin styles-imbrication {
+    cite > .quote-content { margin: 0 .2em; }
+    span.roleplay > .roleplay-content { margin: .5em 0 0; }
+    span.aside {
+      font-size: 1em;
+      padding: .3em .6em;
+    }
+  }
+
+  cite {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: .8em 0 .25em 0;
+    font-style: normal;
+
+    & > .quote-content {
+      color: darken($lightWhite, 20%);
+      margin: 0 .6em;
+      padding-left: .6em;
+      border-left: 2px solid darken($lightWhite, 50%);
+    }
+
+    & > .quote-author {
+      display: flex;
+      align-items: center;
+      position: relative;
+      color: $lightWhite;
+      font-size: .82em;
+      letter-spacing: .04em;;
+      font-weight: $fontWeightBold;
+    }
+
+    @include styles-imbrication;
+  }
+
+  span.roleplay {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: .8em 0 .25em 0;
+
+    & > .roleplay-content {
+      display: inline-block;
+      position: relative;
+      min-width: 35%;
+      margin: .5em 1em 0;
+      padding: .4em .6em;
+      border-radius: .45em;
+      background: $darkGrey;
+      border: 1px solid darken(#eece93, 40%);
+      border-bottom-width: 3px;
+
+      &::before {
+        $triangle-size: 8px;
+        content: "";
+        position: absolute;
+        top: -$triangle-size;
+        left: 1em;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 $triangle-size $triangle-size $triangle-size;
+        border-color: transparent transparent darken(#eece93, 40%) transparent;
+      }
+    }
+
+    & > .roleplay-author {
+      display: flex;
+      align-items: center;
+      position: relative;
+      color: #eece93;
+      font-size: .82em;
+      letter-spacing: .04em;
+      font-weight: $fontWeightBold;
+
+      &::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        margin-right: .4em;
+        background: url("https://data.twinoid.com/img/icons/rp.png") center no-repeat;
+      }
+    }
+
+    @include styles-imbrication;
+  }
+
+  span.aside {
+    display: block;
+    font-size: .85em;
+    letter-spacing: .03em;
+    color: darken($lightWhite, 15%);
+    margin: 0.8em 0 0.25em 0;
+    padding: .5em 1em;
+    border-left: 2px solid transparentize($lightWhite, .9);
+    border-radius: .6em;
+
+    @include styles-imbrication;
+  }
+
+  a.player {
+    $player-color: lighten($lightGrey, 15%);
+    padding: 0 0.6em 0 0.2em;
+    margin: 0 .1em;
+    border-radius: .25em;
+    font-weight: $fontWeightBold;
+    color: $player-color;
+    background: transparentize($player-color, .9);
+
+    &:hover, &:active, &:focus {
+      color: lighten($player-color, 10%);
+      background: transparentize($player-color, .75);
+    }
+
+    &::before {
+      content: "";
+      display: inline-block;
+      vertical-align: text-top;
+      margin: .05em .1em;
+      width: 15px;
+      height: 18px;
+      background: url("/assets/icons/not_friend.svg") center no-repeat;
+    }
+
+    &.friend {
+      $friend-color: $lightViolet;
+      color: $friend-color;
+      background: transparentize($friend-color, .9);
+
+      &:hover, &:active, &:focus {
+        color: lighten($friend-color, 10%);
+        background: transparentize($friend-color, .75);
+      }
+    
+      &::before { background: url("/assets/icons/friend.svg") center no-repeat; }
+    }
+  }
+
+  a.player-alt { // Too heavy on styles
+    padding: .05em 0.6em .05em 0.2em;
+    margin: 0 .1em;
+    border: 1px solid $mediumGrey;
+    border-bottom-width: 2px;
+    border-radius: .25em;
+    color: $lightGrey;
+    font-weight: $fontWeightBold;
+    background: $deepBlack;
+
+    transition: all .15s;
+
+    &:hover, &:active, &:focus {
+      text-decoration: none;
+      color: lighten($lightGrey, 15%);
+      border-color: $lightGrey;
+    }
+
+    &::before {
+      content: "";
+      display: inline-block;
+      vertical-align: text-top;
+      margin: .05em .1em;
+      width: 15px;
+      height: 18px;
+      background: url("/assets/icons/not_friend.svg") center no-repeat;
+    }
+
+    &.friend {
+      border-color: lighten($mediumViolet, 10%);
+      color: $lightViolet;
+
+      &:hover, &:active, &:focus {
+        color: lighten($lightViolet, 10%);
+        border-color: lighten($mediumViolet, 25%);
+      }
+    
+      &::before { background: url("/assets/icons/friend.svg") center no-repeat; }
+    }
   }
 }
 
