@@ -5,10 +5,10 @@
   [formGroup]="loginForm"
   (ngSubmit)="onSubmit($event)"
 >
-  <h2 class="active_method">
+  <h3 class="active_method">
     <img src="/assets/login-methods/dinoparc.png"/>
     <ng-container i18n="@@login.method.dinoparc">Sign in with Dinoparc</ng-container>
-  </h2>
+  </h3>
   <label>
     <span i18n="Dinoparc server label@@login.dinoparcServer">Server</span>
     <select class="small" name="server" class="field" formControlName="server">

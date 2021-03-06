@@ -1,12 +1,14 @@
 .content.login {
   max-width: $fourColsWidth;
 
-  h1 {
+  h1, h2 {
     font-size: 2.6em;
+    font-style: italic;
+    font-weight: $fontWeightLight;
     text-transform: none;
   }
 
-  h2, h3 {
+  h3 {
     color: $lightWhite;
     font-size: 1em;
     font-weight: $fontWeightBold;
@@ -29,5 +31,29 @@
     vertical-align: text-top;
     padding-right: 0.6rem;
   }
+}
 
+etwin-bar .content.login {
+  position: fixed;
+  right: 0;
+  margin: 56px .8em .8em;
+  padding: 1.3em 1.5em;
+  background: $deepBlack;
+  border: 1px solid $red;
+  border-radius: 4px;
+  box-shadow:  0 4px 0 0 $darkRed, 0 0 16px 1px $deepBlack;
+
+  &::before {
+    $size: 10px;
+
+    content:"";
+    position: absolute;
+    top: -$size;
+    left: calc(50% - #{$size});
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 $size $size $size;
+    border-color: transparent transparent $red transparent;
+  }
 }
