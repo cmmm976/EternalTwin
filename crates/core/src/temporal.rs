@@ -66,12 +66,13 @@ impl<T> Snapshot<T> {
   }
 }
 
+/// A versioned first-party value, whose value is always known.
 pub struct Temporal<T> {
   current: SnapshotFrom<T>,
   old: BTreeMap<Instant, T>,
 }
 
-impl<T: Eq> Temporal<T> {
+impl<T> Temporal<T> {
   pub fn new(time: Instant, value: T) -> Self {
     Self {
       current: SnapshotFrom::new(time, value),
@@ -90,19 +91,6 @@ impl<T: Eq> Temporal<T> {
         .rev()
         .next()
         .map(|(t, v)| SnapshotFrom::new(*t, v))
-    }
-  }
-
-  pub fn set(&mut self, time: Instant, value: T) {
-    assert!(time > self.current.period.start);
-    if value != self.current.value {
-      let next = SnapshotFrom {
-        period: (time..).into(),
-        value,
-      };
-      let prev = core::mem::replace(&mut self.current, next);
-      let old = self.old.insert(prev.period.start, prev.value);
-      debug_assert!(old.is_none());
     }
   }
 
@@ -166,8 +154,26 @@ impl<T: Eq> Temporal<T> {
       })
       .rev()
   }
+}
 
-  pub fn from_iter<I: IntoIterator<Item = (Instant, T)>>(iter: I) -> Self {
+impl<T: Eq> Temporal<T> {
+  pub fn set(&mut self, time: Instant, value: T) {
+    assert!(
+      time > self.current.period.start,
+      "Values must be provided in chronological order"
+    );
+    if value != self.current.value {
+      let next = SnapshotFrom {
+        period: (time..).into(),
+        value,
+      };
+      let prev = core::mem::replace(&mut self.current, next);
+      let old = self.old.insert(prev.period.start, prev.value);
+      debug_assert!(old.is_none());
+    }
+  }
+
+  pub fn from_values<I: IntoIterator<Item = (Instant, T)>>(iter: I) -> Self {
     let mut iter = iter.into_iter();
     let mut cur: (Instant, T) = match iter.next() {
       Some((t, v)) => (t, v),
@@ -175,7 +181,7 @@ impl<T: Eq> Temporal<T> {
     };
     let mut old: BTreeMap<Instant, T> = BTreeMap::new();
     for new_cur in iter {
-      assert!(new_cur.0 > cur.0);
+      assert!(new_cur.0 > cur.0, "Values must be provided in cronological order");
       if new_cur.1 != cur.1 {
         let old_cur = core::mem::replace(&mut cur, new_cur);
         old.insert(old_cur.0, old_cur.1);
@@ -188,3 +194,182 @@ impl<T: Eq> Temporal<T> {
   }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ArchivedValue<T> {
+  value: T,
+  last_seen: Instant,
+}
+
+impl<T> ArchivedValue<T> {
+  pub fn new(value: T, last_seen: Instant) -> Self {
+    ArchivedValue { value, last_seen }
+  }
+
+  pub fn value(&self) -> &T {
+    &self.value
+  }
+
+  pub fn into_value(self) -> T {
+    self.value
+  }
+
+  pub fn last_seen(&self) -> Instant {
+    self.last_seen
+  }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ArchivedSnapshotFrom<T>(SnapshotFrom<ArchivedValue<T>>);
+
+impl<T> ArchivedSnapshotFrom<T> {
+  pub fn new(start: Instant, value: T, last_seen: Instant) -> Self {
+    Self(SnapshotFrom::new(start, ArchivedValue::new(value, last_seen)))
+  }
+
+  pub fn period(&self) -> PeriodFrom {
+    self.0.period()
+  }
+
+  pub fn start_time(&self) -> Instant {
+    self.0.start_time()
+  }
+
+  pub fn last_seen(&self) -> Instant {
+    self.0.value().last_seen
+  }
+
+  pub fn value(&self) -> &T {
+    &self.0.value().value
+  }
+
+  pub fn into_value(self) -> T {
+    self.0.into_value().value
+  }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ArchivedSnapshot<T>(Snapshot<ArchivedValue<T>>);
+
+impl<T> ArchivedSnapshot<T> {
+  pub fn period(&self) -> Period {
+    self.0.period()
+  }
+
+  pub fn start_time(&self) -> Instant {
+    self.0.start_time()
+  }
+
+  pub fn end_time(&self) -> Option<Instant> {
+    self.0.end_time()
+  }
+
+  pub fn last_seen(&self) -> Instant {
+    self.0.value().last_seen
+  }
+
+  pub fn value(&self) -> &T {
+    &self.0.value().value
+  }
+
+  pub fn into_value(self) -> T {
+    self.0.into_value().value
+  }
+}
+
+/// A versioned third-party value, whose value may be unknown at certain times.
+pub struct Archived<T>(Temporal<ArchivedValue<T>>);
+
+impl<T> Archived<T> {
+  pub fn new(time: Instant, value: T, last_seen: Instant) -> Self {
+    Self(Temporal::new(time, ArchivedValue::new(value, last_seen)))
+  }
+
+  pub fn at(&self, time: Option<Instant>) -> Option<ArchivedSnapshotFrom<&T>> {
+    self
+      .0
+      .at(time)
+      .map(|s| ArchivedSnapshotFrom::new(s.start_time(), s.value().value(), s.value().last_seen()))
+  }
+
+  pub fn time(&self) -> Instant {
+    self.0.time()
+  }
+
+  pub fn last_seen(&self) -> Instant {
+    self.0.value().last_seen()
+  }
+
+  pub fn value(&self) -> &T {
+    self.0.value().value()
+  }
+
+  pub fn into_value(self) -> T {
+    self.0.into_value().into_value()
+  }
+
+  pub fn iter(&self) -> impl Iterator<Item = ArchivedSnapshot<&T>> {
+    self.0.iter().map(|s| {
+      ArchivedSnapshot(Snapshot {
+        period: s.period,
+        value: ArchivedValue {
+          value: s.value().value(),
+          last_seen: s.value().last_seen(),
+        },
+      })
+    })
+  }
+}
+
+impl<T: Eq> Archived<T> {
+  pub fn set(&mut self, time: Instant, value: T) {
+    assert!(
+      time > self.last_seen(),
+      "Values must be provided in chronological order"
+    );
+    if &value == self.value() {
+      self.0.current.value.last_seen = time;
+    } else {
+      let next = SnapshotFrom::new(time, ArchivedValue::new(value, time));
+      let prev = core::mem::replace(&mut self.0.current, next);
+      let old = self.0.old.insert(prev.period.start, prev.value);
+      debug_assert!(old.is_none());
+    }
+  }
+
+  pub fn map<B: Eq, F: FnMut(ArchivedSnapshot<&T>) -> B>(&self, mut f: F) -> Archived<B> {
+    let iter = self.iter().map(|s| {
+      let time = s.start_time();
+      let last_seen = s.last_seen();
+      let value = f(s);
+      (time, value, last_seen)
+    });
+    Archived::from_values(iter)
+  }
+
+  pub fn from_values<I: IntoIterator<Item = (Instant, T, Instant)>>(iter: I) -> Self {
+    let mut iter = iter.into_iter().map(|(t, v, l)| (t, ArchivedValue::new(v, l)));
+    let mut cur = iter.next().expect("Cannot construct Archived<T> from empty iterator");
+    assert!(cur.0 <= cur.1.last_seen, "last_seen cannot be before start_time");
+
+    let mut old: BTreeMap<Instant, ArchivedValue<T>> = BTreeMap::new();
+    for next in iter {
+      assert!(next.0 <= next.1.last_seen, "last_seen cannot be before start_time");
+      assert!(
+        next.1.last_seen > cur.0,
+        "Values must be provided in cronological order"
+      );
+
+      if next.1.value == cur.1.value {
+        cur.1.last_seen = next.1.last_seen;
+      } else {
+        let prev = core::mem::replace(&mut cur, next);
+        old.insert(prev.0, prev.1);
+      }
+    }
+
+    Archived(Temporal {
+      current: SnapshotFrom::new(cur.0, cur.1),
+      old,
+    })
+  }
+}
