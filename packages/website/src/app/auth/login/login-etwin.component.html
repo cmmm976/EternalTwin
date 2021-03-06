@@ -5,10 +5,10 @@
   [formGroup]="loginForm"
   (ngSubmit)="onSubmit($event)"
 >
-  <div class="active_method">
+  <h2 class="active_method">
     <img src="/assets/login-methods/eternal-twin.png"/>
     <ng-container i18n="@@login.method.etwin">Sign in with Eternal-Twin</ng-container>
-  </div>
+  </h2>
   <label>
     <span i18n="Username or email address field label@@login.usernameOrEmail">Username or email address</span>
     <input type="text" name="login" class="field" formControlName="login" required="required"/>

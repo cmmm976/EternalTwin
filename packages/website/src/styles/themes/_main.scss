@@ -108,6 +108,10 @@ etwin-main-layout, etwin-small-layout {
   }
 }
 
+etwin-small-layout .content {
+  max-width: $fourColsWidth;
+}
+
 .content {
   margin: 0 auto 4.3em auto;
   padding: 2.25em;
@@ -302,6 +306,22 @@ etwin-main-layout, etwin-small-layout {
 
 label, input[type=email], input[type=password], input[type=text], input[type=submit] {
   display: block;
+
+  select {
+    padding: 0.7em;
+    margin: 0.4em 0 0.25em 0;
+    color: #ededed;
+    background-color: $darkGrey;
+    border-radius: 0.25em;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    // appearance: none;
+
+    &:hover, &:focus, &:active {
+      background-color: lighten($darkGrey, 4%);
+    }
+  }
 }
 
 $spacing: 1rem;

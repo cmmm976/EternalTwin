@@ -5,10 +5,10 @@
   [formGroup]="loginForm"
   (ngSubmit)="onSubmit($event)"
 >
-  <div class="active_method">
+  <h2 class="active_method">
     <img src="/assets/login-methods/hammerfest.png"/>
     <ng-container i18n="@@login.method.hammerfest">Sign in with Hammerfest</ng-container>
-  </div>
+  </h2>
   <label>
     <span i18n="Hammerfest server label@@login.hammerfestServer">Server</span>
     <select class="small" name="server" class="field" formControlName="server">

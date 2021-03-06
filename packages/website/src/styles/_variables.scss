@@ -8,6 +8,8 @@ $columns: 12;
 $colWidth: 72px;
 $gutterWidth: ($contentWidth - (2 * $marginWidth) - ($columns * $colWidth)) / ($columns - 1) ; // 8px
 
+$fourColsWidth: (4 * $colWidth) + (3 * $gutterWidth) + (2 * $marginWidth);
+$nineColsWidth: (9 * $colWidth) + (8 * $gutterWidth) + (2 * $marginWidth);
 
 
 /* --- SET FONTS --- */

@@ -1,0 +1,33 @@
+.content.login {
+  max-width: $fourColsWidth;
+
+  h1 {
+    font-size: 2.6em;
+    text-transform: none;
+  }
+
+  h2, h3 {
+    color: $lightWhite;
+    font-size: 1em;
+    font-weight: $fontWeightBold;
+    text-transform: uppercase;
+    letter-spacing: .025em;
+  }
+
+  label:first-of-type {
+    margin-top: 2.5em;
+  }
+
+  .btn {
+    min-width: 100% ;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .btn img, img {
+    height: 1.25em;
+    vertical-align: text-top;
+    padding-right: 0.6rem;
+  }
+
+}
