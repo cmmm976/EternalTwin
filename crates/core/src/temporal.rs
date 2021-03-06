@@ -1,8 +1,7 @@
 use crate::core::{FinitePeriod, Instant, Period, PeriodFrom};
 use std::collections::BTreeMap;
-use std::iter::FromIterator;
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct SnapshotFrom<T> {
   period: PeriodFrom,
   value: T,
@@ -24,18 +23,16 @@ impl<T> SnapshotFrom<T> {
     self.period.start
   }
 
-  pub fn value_ref(&self) -> &T {
+  pub fn value(&self) -> &T {
     &self.value
   }
-}
 
-impl<T: Copy> SnapshotFrom<T> {
-  pub fn value(&self) -> T {
+  pub fn into_value(self) -> T {
     self.value
   }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Snapshot<T> {
   period: Period,
   value: T,
@@ -60,13 +57,11 @@ impl<T> Snapshot<T> {
     }
   }
 
-  pub fn value_ref(&self) -> &T {
+  pub fn value(&self) -> &T {
     &self.value
   }
-}
 
-impl<T: Copy> Snapshot<T> {
-  pub fn value(&self) -> T {
+  pub fn into_value(self) -> T {
     self.value
   }
 }
@@ -115,8 +110,12 @@ impl<T: Eq> Temporal<T> {
     self.current.start_time()
   }
 
-  pub fn value_ref(&self) -> &T {
-    &self.current.value_ref()
+  pub fn value(&self) -> &T {
+    &self.current.value()
+  }
+
+  pub fn into_value(self) -> T {
+    self.current.into_value()
   }
 
   pub fn map<B: Eq, F: FnMut(Snapshot<&T>) -> B>(&self, mut f: F) -> Temporal<B> {
@@ -167,10 +166,8 @@ impl<T: Eq> Temporal<T> {
       })
       .rev()
   }
-}
 
-impl<T: Eq> FromIterator<(Instant, T)> for Temporal<T> {
-  fn from_iter<Iter: IntoIterator<Item = (Instant, T)>>(iter: Iter) -> Self {
+  pub fn from_iter<I: IntoIterator<Item = (Instant, T)>>(iter: I) -> Self {
     let mut iter = iter.into_iter();
     let mut cur: (Instant, T) = match iter.next() {
       Some((t, v)) => (t, v),
@@ -191,8 +188,3 @@ impl<T: Eq> FromIterator<(Instant, T)> for Temporal<T> {
   }
 }
 
-impl<T: Copy> Temporal<T> {
-  pub fn value(&self) -> T {
-    self.current.value()
-  }
-}
