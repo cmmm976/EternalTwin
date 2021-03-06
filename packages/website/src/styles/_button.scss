@@ -155,11 +155,11 @@ button { border: none; background: none; }
 
     &.tertiary {
       font-weight: 600;
-      color: $lightGrey;
+      color: lighten($lightGrey, 10%);
       background: none;
       box-shadow:
         0 0 0 1px transparentize($deepBlack, 1),
-        inset 0 0 0 2px transparentize($darkGrey, .65); /*Inset shadow, simulates a white border*/
+        inset 0 0 0 2px transparentize($darkGrey, .4); /*Inset shadow, simulates a white border*/
       transform: none !important;
 
       &:not([disabled]):not(.disabled) {
@@ -168,7 +168,7 @@ button { border: none; background: none; }
           background: none;
           box-shadow:
             0 0 0 1px transparentize($deepBlack, .7),
-            inset 0 0 0 2px transparentize($lightWhite, .9);
+            inset 0 0 0 2px transparentize($lightWhite, .85);
         }
 
         &:active {
@@ -176,7 +176,7 @@ button { border: none; background: none; }
           background: transparentize($lightWhite, .98);
           box-shadow:
             0 0 0 1px transparentize($deepBlack, .7),
-            inset 0 0 0 2px transparentize($lightWhite, .85);
+            inset 0 0 0 2px transparentize($lightWhite, .8);
         }
       }
       &[disabled], &.disabled {
@@ -203,7 +203,7 @@ button { border: none; background: none; }
 
     &[disabled], &.disabled {
       font-weight: 600;
-      color: lighten($lightGrey, 5);
+      color: lighten($lightGrey, 6%);
       background-color: $darkGrey;
       background-image: linear-gradient(135deg,
         $darkGrey 16.67%,
@@ -217,22 +217,22 @@ button { border: none; background: none; }
       box-shadow:
         0 1px 0 1px $deepBlack,
         inset 0 0 0 2px $darkGrey;  /*Inset shadow, simulates a white border*/
-      cursor: not-allowed;
-
-      transition: background-image .25s;
 
       &:hover, &:focus, &:active {
+        $stripesColor: lighten($darkGrey, 1%);
+
+        color: lighten($lightGrey, 8%);
         background-image: linear-gradient(135deg,
-          $darkGrey 16.67%,
+          $stripesColor 16.67%,
           $deepGrey 16.67%,
           $deepGrey 50%,
-          $darkGrey 50%,
-          $darkGrey 66.67%,
+          $stripesColor 50%,
+          $stripesColor 66.67%,
           $deepGrey 66.67%,
           $deepGrey 100%);  /*Stripes background*/
         box-shadow:
           0 1px 0 1px $deepBlack,
-          inset 0 0 0 2px $darkGrey, 2%;  /*Inset shadow, simulates a white border*/
+          inset 0 0 0 2px $stripesColor;  /*Inset shadow, simulates a white border*/
       }
     }
   }
