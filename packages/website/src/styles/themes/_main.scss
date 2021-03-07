@@ -268,13 +268,76 @@ etwin-small-layout .content {
     margin: .6em 0;
   }
 
-  &>h1:first-child {
+  & > h1:first-child {
     margin-top: .2em;
   }
 }
 
+.modal, .success, .error {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 1.2em 0;
+  font-size: .9em;
+  color: lighten($lightGrey, 25%);
+  border: 1px solid darken($lightGrey, 15%);
+  border-radius: 5px;
 
-.error {
+  & > p, & > * { margin: .3em .5em; }
+
+  &::before {
+    display: flex;
+    content: '\e80f';
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2em;
+    padding: .3em 0;
+    font-family: fontello;
+    font-size: 1.3rem;
+    background: transparentize($lightGrey, .8);
+    border-radius: 4px 0 0 4px;
+  }
+
+  &.error {
+    border-color: $red;
+
+    animation: modal-pop-in .15s ease-out 0s 1 normal;
+
+    &::before {
+      content: '\e811';
+      color: lighten($red, 10%);
+      background: transparentize($red, .75);
+    }
+  }
+
+  &.success {
+    border-color: $green;
+
+    animation: modal-pop-in .15s ease-out 0s 1 normal;
+
+    &::before {
+      content: '\e810';
+      color: lighten($green, 10%);
+      background: transparentize($green, .8);
+    }
+  }
+}
+
+input + .modal { margin-top: .25em; }
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(.5em);
+  }
+  to {
+    opacity: default;
+    transform: translateY(0);
+  }
+}
+
+/* .error {
   font-size: .85em;
   line-height: 1.3em;
   font-weight: 700;
@@ -282,23 +345,35 @@ etwin-small-layout .content {
   padding: 9px;
   border-radius: 4px;
   background-color: $darkViolet;
-}
+} */
 
 .splitter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   margin: 2.3em 0;
-  border-bottom: 2px solid $mediumGrey;
-  display: block;
   clear: both;
   height: 2px;
   overflow: visible;
-  color: $lightWhite;
   text-align: center;
-  line-height: .3em;
+  color: lighten($lightGrey, 25%);
   text-transform: uppercase;
-  text-shadow: 0 0 5px $deepGrey;
-  font-size: .76em;
-  letter-spacing: .05em;
+  font-size: .85em;
+  font-weight: $fontWeightBold;
+  letter-spacing: .1em;
+
+  &::before, &::after {
+    content:"";
+    flex: 1;
+    border-bottom: 2px solid $mediumGrey;
+  }
+
+  & > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+  & > *:first-child { margin-left:  .5em; }
+  & > *:last-child  { margin-right: .5em; }
 
   &.s {  margin: 1.4em 0; }
   &.xl { margin: 3.8em 0; }

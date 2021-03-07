@@ -15,11 +15,12 @@
         <etwin-login-etwin></etwin-login-etwin>
       </ng-container>
     </ng-container>
-    <p class="info">New user? <a routerLink="/register" i18n="@@login.registrationLink">Register here</a>.</p>
+    <div class="modal">
+      <p>New user? <a routerLink="/register" i18n="@@login.registrationLink">Register here</a>.</p>
+    </div>
 
-    <div class="splitter"></div>
+    <div class="splitter xl"><p>Or</p></div>
 
-    <h2>Alternatives</h2>
     <a routerLink="/login" [queryParams]="{method: 'etwin', next: next}" class="btn secondary" *ngIf="method !== AuthMethod.Etwin">
       <img src="/assets/login-methods/eternal-twin.png"/>
       <ng-container i18n="@@login.method.etwin">Sign in with Eternal-Twin</ng-container>
