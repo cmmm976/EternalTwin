@@ -1,17 +1,106 @@
 use crate::core::{FinitePeriod, Instant, Period, PeriodFrom};
 use std::collections::BTreeMap;
 
+pub trait TemporalRecord: Sized + private::SealedTemporalRecord {
+  fn value(&self) -> &Self::Value;
+
+  fn into_value(self) -> Self::Value;
+}
+
+mod private {
+  use super::*;
+
+  pub trait SealedTemporalRecord: Sized {
+    type Value: Eq;
+
+    fn from_value_and_time(value: Self::Value, time: Instant) -> Self;
+
+    fn try_update(&mut self, other: Self) -> Result<(), Self>;
+
+    fn latest_time(&self, start_time: Instant) -> Instant;
+  }
+}
+
+impl<T: Eq> TemporalRecord for T {
+  fn value(&self) -> &T {
+    self
+  }
+
+  fn into_value(self) -> T {
+    self
+  }
+}
+
+impl<T: Eq> private::SealedTemporalRecord for T {
+  type Value = T;
+
+  fn from_value_and_time(value: T, _time: Instant) -> T {
+    value
+  }
+
+  fn try_update(&mut self, other: T) -> Result<(), T> {
+    if *self == other {
+      Ok(())
+    } else {
+      Err(other)
+    }
+  }
+
+  fn latest_time(&self, start_time: Instant) -> Instant {
+    start_time
+  }
+}
+
+#[derive(Copy, Clone, Debug, Hash)]
+struct ArchivedRecord<T> {
+  value: T,
+  last_seen: Instant,
+}
+
+impl<T: Eq> TemporalRecord for ArchivedRecord<T> {
+  fn value(&self) -> &T {
+    &self.value
+  }
+
+  fn into_value(self) -> T {
+    self.value
+  }
+}
+
+impl<T: Eq> private::SealedTemporalRecord for ArchivedRecord<T> {
+  type Value = T;
+
+  fn from_value_and_time(value: T, time: Instant) -> Self {
+    Self { value, last_seen: time }
+  }
+
+  fn try_update(&mut self, other: Self) -> Result<(), Self> {
+    if self.value == other.value {
+      if self.last_seen < other.last_seen {
+        self.last_seen = other.last_seen;
+      }
+      Ok(())
+    } else {
+      Err(other)
+    }
+  }
+
+  fn latest_time(&self, _start_time: Instant) -> Instant {
+    self.last_seen
+  }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct SnapshotFrom<T> {
   period: PeriodFrom,
-  value: T,
+  record: T,
 }
 
 impl<T> SnapshotFrom<T> {
-  pub fn new(start: Instant, value: T) -> Self {
+  pub fn new(start: Instant, record: T) -> Self {
     Self {
       period: (start..).into(),
-      value,
+      record,
     }
   }
 
@@ -23,19 +112,33 @@ impl<T> SnapshotFrom<T> {
     self.period.start
   }
 
-  pub fn value(&self) -> &T {
-    &self.value
+  pub fn value(&self) -> &T::Value
+  where
+    T: TemporalRecord,
+  {
+    self.record.value()
   }
 
-  pub fn into_value(self) -> T {
-    self.value
+  pub fn into_value(self) -> T::Value
+  where
+    T: TemporalRecord,
+  {
+    self.record.into_value()
+  }
+
+  pub fn record(&self) -> &T {
+    &self.record
+  }
+
+  pub fn into_record(self) -> T {
+    self.record
   }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Snapshot<T> {
   period: Period,
-  value: T,
+  record: T,
 }
 
 impl<T> Snapshot<T> {
@@ -57,25 +160,38 @@ impl<T> Snapshot<T> {
     }
   }
 
-  pub fn value(&self) -> &T {
-    &self.value
+  pub fn value(&self) -> &T::Value
+  where
+    T: TemporalRecord,
+  {
+    self.record.value()
   }
 
-  pub fn into_value(self) -> T {
-    self.value
+  pub fn into_value(self) -> T::Value
+  where
+    T: TemporalRecord,
+  {
+    self.record.into_value()
+  }
+
+  pub fn record(&self) -> &T {
+    &self.record
+  }
+
+  pub fn into_record(self) -> T {
+    self.record
   }
 }
 
-/// A versioned first-party value, whose value is always known.
 pub struct Temporal<T> {
   current: SnapshotFrom<T>,
   old: BTreeMap<Instant, T>,
 }
 
 impl<T> Temporal<T> {
-  pub fn new(time: Instant, value: T) -> Self {
+  pub fn new(time: Instant, record: T) -> Self {
     Self {
-      current: SnapshotFrom::new(time, value),
+      current: SnapshotFrom::new(time, record),
       old: BTreeMap::new(),
     }
   }
@@ -83,7 +199,7 @@ impl<T> Temporal<T> {
   pub fn at(&self, time: Option<Instant>) -> Option<SnapshotFrom<&T>> {
     let time = time.unwrap_or(self.current.period.start);
     if time >= self.current.start_time() {
-      Some(SnapshotFrom::new(self.current.start_time(), &self.current.value))
+      Some(SnapshotFrom::new(self.current.start_time(), &self.current.record))
     } else {
       self
         .old
@@ -98,24 +214,16 @@ impl<T> Temporal<T> {
     self.current.start_time()
   }
 
-  pub fn value(&self) -> &T {
-    &self.current.value()
-  }
-
-  pub fn into_value(self) -> T {
-    self.current.into_value()
-  }
-
-  pub fn map<B: Eq, F: FnMut(Snapshot<&T>) -> B>(&self, mut f: F) -> Temporal<B> {
+  pub fn map<B: TemporalRecord, F: FnMut(Snapshot<&T>) -> B>(&self, mut f: F) -> Temporal<B> {
     let mut it = self
       .old
       .iter()
-      .chain(core::iter::once((&self.current.period.start, &self.current.value)))
+      .chain(core::iter::once((&self.current.period.start, &self.current.record)))
       .peekable();
 
-    let mut result: Option<Temporal<B>> = None;
+    let mut mapped: Option<Temporal<B>> = None;
 
-    while let Some((start, v)) = it.next() {
+    while let Some((start, r)) = it.next() {
       let end = it.peek().map(|(t, ..)| *t);
       let period = match end {
         Some(end) => Period::Finite(FinitePeriod {
@@ -124,17 +232,17 @@ impl<T> Temporal<T> {
         }),
         None => Period::From(PeriodFrom { start: *start }),
       };
-      let v = f(Snapshot { period, value: v });
-      result = match result {
-        None => Some(Temporal::new(*start, v)),
-        Some(mut r) => {
-          r.set(*start, v);
-          Some(r)
+      let r = f(Snapshot { period, record: r });
+      mapped = match mapped {
+        None => Some(Temporal::new(*start, r)),
+        Some(mut m) => {
+          m.set_record(*start, r);
+          Some(m)
         }
       }
     }
 
-    result.unwrap()
+    mapped.unwrap()
   }
 
   pub fn iter(&self) -> impl Iterator<Item = Snapshot<&T>> {
@@ -142,234 +250,71 @@ impl<T> Temporal<T> {
     self
       .old
       .iter()
-      .chain(core::iter::once((&self.current.period.start, &self.current.value)))
+      .chain(core::iter::once((&self.current.period.start, &self.current.record)))
       .rev()
-      .map(move |(start, v)| {
+      .map(move |(start, r)| {
         let period = match next {
           Some(end) => Period::Finite(FinitePeriod { start: *start, end }),
           None => Period::From(PeriodFrom { start: *start }),
         };
         next = Some(*start);
-        Snapshot { period, value: v }
+        Snapshot { period, record: r }
       })
       .rev()
   }
 }
 
-impl<T: Eq> Temporal<T> {
-  pub fn set(&mut self, time: Instant, value: T) {
-    assert!(
-      time > self.current.period.start,
-      "Values must be provided in chronological order"
-    );
-    if value != self.current.value {
+impl<T: TemporalRecord> Temporal<T> {
+  pub fn value(&self) -> &T::Value {
+    &self.current.value()
+  }
+
+  pub fn into_value(self) -> T::Value {
+    self.current.into_value()
+  }
+
+  pub fn set(&mut self, time: Instant, value: T::Value) {
+    let record = T::from_value_and_time(value, time);
+    self.set_record(time, record);
+  }
+
+  fn set_record(&mut self, time: Instant, record: T) {
+    let new_time = record.latest_time(time);
+    let old_time = self.current.record.latest_time(self.current.period.start);
+    assert!(new_time > old_time, "Values must be provided in chronological order");
+
+    if let Err(record) = self.current.record.try_update(record) {
       let next = SnapshotFrom {
         period: (time..).into(),
-        value,
+        record,
       };
       let prev = core::mem::replace(&mut self.current, next);
-      let old = self.old.insert(prev.period.start, prev.value);
+      let old = self.old.insert(prev.period.start, prev.record);
       debug_assert!(old.is_none());
     }
   }
 
   pub fn from_values<I: IntoIterator<Item = (Instant, T)>>(iter: I) -> Self {
     let mut iter = iter.into_iter();
-    let mut cur: (Instant, T) = match iter.next() {
-      Some((t, v)) => (t, v),
-      None => panic!("Cannot construct Temporal<T> from empty iterator"),
-    };
-    let mut old: BTreeMap<Instant, T> = BTreeMap::new();
-    for new_cur in iter {
-      assert!(new_cur.0 > cur.0, "Values must be provided in cronological order");
-      if new_cur.1 != cur.1 {
-        let old_cur = core::mem::replace(&mut cur, new_cur);
-        old.insert(old_cur.0, old_cur.1);
-      }
-    }
-    Self {
-      current: SnapshotFrom::new(cur.0, cur.1),
-      old,
-    }
-  }
-}
+    let mut cur = iter.next().expect("Cannot construct Temporal<T> from empty iterator");
+    assert!(cur.0 <= cur.1.latest_time(cur.0), "Invalid start time for value");
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ArchivedValue<T> {
-  value: T,
-  last_seen: Instant,
-}
+    let mut old = BTreeMap::<Instant, T>::new();
+    for (next_time, next_val) in iter {
+      let latest_time = next_val.latest_time(next_time);
+      assert!(next_time <= latest_time, "Invalid start time for value");
+      assert!(latest_time > next_time, "Values must be provided in cronological order");
 
-impl<T> ArchivedValue<T> {
-  pub fn new(value: T, last_seen: Instant) -> Self {
-    ArchivedValue { value, last_seen }
-  }
-
-  pub fn value(&self) -> &T {
-    &self.value
-  }
-
-  pub fn into_value(self) -> T {
-    self.value
-  }
-
-  pub fn last_seen(&self) -> Instant {
-    self.last_seen
-  }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ArchivedSnapshotFrom<T>(SnapshotFrom<ArchivedValue<T>>);
-
-impl<T> ArchivedSnapshotFrom<T> {
-  pub fn new(start: Instant, value: T, last_seen: Instant) -> Self {
-    Self(SnapshotFrom::new(start, ArchivedValue::new(value, last_seen)))
-  }
-
-  pub fn period(&self) -> PeriodFrom {
-    self.0.period()
-  }
-
-  pub fn start_time(&self) -> Instant {
-    self.0.start_time()
-  }
-
-  pub fn last_seen(&self) -> Instant {
-    self.0.value().last_seen
-  }
-
-  pub fn value(&self) -> &T {
-    &self.0.value().value
-  }
-
-  pub fn into_value(self) -> T {
-    self.0.into_value().value
-  }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ArchivedSnapshot<T>(Snapshot<ArchivedValue<T>>);
-
-impl<T> ArchivedSnapshot<T> {
-  pub fn period(&self) -> Period {
-    self.0.period()
-  }
-
-  pub fn start_time(&self) -> Instant {
-    self.0.start_time()
-  }
-
-  pub fn end_time(&self) -> Option<Instant> {
-    self.0.end_time()
-  }
-
-  pub fn last_seen(&self) -> Instant {
-    self.0.value().last_seen
-  }
-
-  pub fn value(&self) -> &T {
-    &self.0.value().value
-  }
-
-  pub fn into_value(self) -> T {
-    self.0.into_value().value
-  }
-}
-
-/// A versioned third-party value, whose value may be unknown at certain times.
-pub struct Archived<T>(Temporal<ArchivedValue<T>>);
-
-impl<T> Archived<T> {
-  pub fn new(time: Instant, value: T, last_seen: Instant) -> Self {
-    Self(Temporal::new(time, ArchivedValue::new(value, last_seen)))
-  }
-
-  pub fn at(&self, time: Option<Instant>) -> Option<ArchivedSnapshotFrom<&T>> {
-    self
-      .0
-      .at(time)
-      .map(|s| ArchivedSnapshotFrom::new(s.start_time(), s.value().value(), s.value().last_seen()))
-  }
-
-  pub fn time(&self) -> Instant {
-    self.0.time()
-  }
-
-  pub fn last_seen(&self) -> Instant {
-    self.0.value().last_seen()
-  }
-
-  pub fn value(&self) -> &T {
-    self.0.value().value()
-  }
-
-  pub fn into_value(self) -> T {
-    self.0.into_value().into_value()
-  }
-
-  pub fn iter(&self) -> impl Iterator<Item = ArchivedSnapshot<&T>> {
-    self.0.iter().map(|s| {
-      ArchivedSnapshot(Snapshot {
-        period: s.period,
-        value: ArchivedValue {
-          value: s.value().value(),
-          last_seen: s.value().last_seen(),
-        },
-      })
-    })
-  }
-}
-
-impl<T: Eq> Archived<T> {
-  pub fn set(&mut self, time: Instant, value: T) {
-    assert!(
-      time > self.last_seen(),
-      "Values must be provided in chronological order"
-    );
-    if &value == self.value() {
-      self.0.current.value.last_seen = time;
-    } else {
-      let next = SnapshotFrom::new(time, ArchivedValue::new(value, time));
-      let prev = core::mem::replace(&mut self.0.current, next);
-      let old = self.0.old.insert(prev.period.start, prev.value);
-      debug_assert!(old.is_none());
-    }
-  }
-
-  pub fn map<B: Eq, F: FnMut(ArchivedSnapshot<&T>) -> B>(&self, mut f: F) -> Archived<B> {
-    let iter = self.iter().map(|s| {
-      let time = s.start_time();
-      let last_seen = s.last_seen();
-      let value = f(s);
-      (time, value, last_seen)
-    });
-    Archived::from_values(iter)
-  }
-
-  pub fn from_values<I: IntoIterator<Item = (Instant, T, Instant)>>(iter: I) -> Self {
-    let mut iter = iter.into_iter().map(|(t, v, l)| (t, ArchivedValue::new(v, l)));
-    let mut cur = iter.next().expect("Cannot construct Archived<T> from empty iterator");
-    assert!(cur.0 <= cur.1.last_seen, "last_seen cannot be before start_time");
-
-    let mut old: BTreeMap<Instant, ArchivedValue<T>> = BTreeMap::new();
-    for next in iter {
-      assert!(next.0 <= next.1.last_seen, "last_seen cannot be before start_time");
-      assert!(
-        next.1.last_seen > cur.0,
-        "Values must be provided in cronological order"
-      );
-
-      if next.1.value == cur.1.value {
-        cur.1.last_seen = next.1.last_seen;
-      } else {
-        let prev = core::mem::replace(&mut cur, next);
-        old.insert(prev.0, prev.1);
+      if let Err(next_val) = cur.1.try_update(next_val) {
+        let prev = core::mem::replace(&mut cur, (next_time, next_val));
+        let old = old.insert(prev.0, prev.1);
+        debug_assert!(old.is_none());
       }
     }
 
-    Archived(Temporal {
+    Temporal {
       current: SnapshotFrom::new(cur.0, cur.1),
       old,
-    })
+    }
   }
 }
