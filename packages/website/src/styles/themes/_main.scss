@@ -259,31 +259,23 @@ etwin-small-layout .content {
     max-width: 100%;
   }
 
-  .info {
-    font-style: italic;
-    font-size: .95em;
-    color: darken($lightWhite, 30%);
-    padding-left: .6em;
-    border-left: 2px solid $lightGrey;
-    margin: .6em 0;
-  }
-
   & > h1:first-child {
     margin-top: .2em;
   }
 }
 
-.modal, .success, .error {
+.info, .success, .error {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin: 1.2em 0;
+  padding-right: .5em;
   font-size: .9em;
   color: lighten($lightGrey, 25%);
   border: 1px solid darken($lightGrey, 15%);
   border-radius: 5px;
 
-  & > p, & > * { margin: .3em .5em; }
+  & > p, & > * { margin: .3em 0; }
 
   &::before {
     display: flex;
@@ -291,6 +283,7 @@ etwin-small-layout .content {
     align-self: stretch;
     align-items: center;
     justify-content: center;
+    margin-right: .5em;
     min-width: 1.2em;
     padding: .3em 0;
     font-family: fontello;
@@ -302,8 +295,6 @@ etwin-small-layout .content {
   &.error {
     border-color: $red;
 
-    animation: modal-pop-in .15s ease-out 0s 1 normal;
-
     &::before {
       content: '\e811';
       color: lighten($red, 10%);
@@ -314,19 +305,19 @@ etwin-small-layout .content {
   &.success {
     border-color: $green;
 
-    animation: modal-pop-in .15s ease-out 0s 1 normal;
-
     &::before {
       content: '\e810';
       color: lighten($green, 10%);
       background: transparentize($green, .8);
     }
   }
+
+  &.error, &.success { animation: info-pop-in .25s ease-out 0s 1 normal; }
 }
 
-input + .modal { margin-top: .25em; }
+input + .info, input + .success, input + .error { margin-top: .25em; }
 
-@keyframes modal-pop-in {
+@keyframes info-pop-in {
   from {
     opacity: 0;
     transform: translateY(.5em);

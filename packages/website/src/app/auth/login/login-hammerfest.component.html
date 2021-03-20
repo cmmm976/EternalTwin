@@ -20,7 +20,7 @@
   <label>
     <span i18n="Hammerfest username address field label@@login.hammerfestUsername">Hammerfest username</span>
     <input type="text" name="username" class="field" formControlName="username" required="required"/>
-    <div *ngIf="username.invalid && (username.dirty || username.touched)" class=" modal error">
+    <div *ngIf="username.invalid && (username.dirty || username.touched)" class="info error">
       <p *ngIf="username.errors?.required" i18n="@@login.hammerfestUsernameRequired">
         The username is required.
       </p>
@@ -29,7 +29,7 @@
   <label>
     <span i18n="Password field label@@login.hammerfest.password">Hammerfest password</span>
     <input type="password" name="password" class="field" formControlName="password" required="required"/>
-    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="modal error">
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="info error">
       <p *ngIf="password.errors?.required" i18n="@@login.passwordRequired">
         The password is required.
       </p>
@@ -37,7 +37,7 @@
   </label>
   <input type="submit" name="sign_in" class="btn primary" i18n-value="Submit the Hammerfest login form label@@login.hammerfest.submit"
          value="Sign in" [disabled]="loginForm.invalid || pendingSubscription !== null"/>
-  <div *ngIf="serverError" class="modal error" i18n="@@login.hammerfest.unknownError">
+  <div *ngIf="serverError" class="info error" i18n="@@login.hammerfest.unknownError">
     <p>Failed to authenticate: please check your credentials.</p>
   </div>
 </form>
