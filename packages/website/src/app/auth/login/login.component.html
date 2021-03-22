@@ -1,7 +1,7 @@
 <etwin-small-layout>
   <div class="content login">
     <ng-container [ngSwitch]="method">
-      <h1>Welcome back !</h1>
+      <h1 i18n="Login page main header@@login.header">Welcome back !</h1>
       <ng-container *ngSwitchCase="AuthMethod.Dinoparc">
         <etwin-login-dinoparc></etwin-login-dinoparc>
       </ng-container>
@@ -16,26 +16,26 @@
       </ng-container>
     </ng-container>
     <div class="info">
-      <p>New user? <a routerLink="/register" i18n="@@login.registrationLink">Register here</a>.</p>
+      <p i18n="Registration proposal@@login.registrationLink">New user ? <a routerLink="/register">Register here</a>.</p>
     </div>
 
-    <div class="splitter xl"><p>Or</p></div>
+    <div class="splitter xl"><p i18n="Login alternatives separator@@login.alternativeMethods">Or</p></div>
 
     <a routerLink="/login" [queryParams]="{method: 'etwin', next: next}" class="btn secondary" *ngIf="method !== AuthMethod.Etwin">
       <img src="/assets/login-methods/eternal-twin.png"/>
-      <ng-container i18n="@@login.method.etwin">Sign in with Eternal-Twin</ng-container>
+      <ng-container i18n="Etwin login link@@login.method.etwin">Sign in with Eternal-Twin</ng-container>
     </a>
     <a routerLink="/login" [queryParams]="{method: 'twinoid', next: next}" class="btn secondary" *ngIf="method !== AuthMethod.Twinoid">
       <img src="/assets/login-methods/twinoid.png"/>
-      <ng-container i18n="@@login.method.twinoid">Sign in with Twinoid</ng-container>
+      <ng-container i18n="Twinoid login link@@login.method.twinoid">Sign in with Twinoid</ng-container>
     </a>
     <a routerLink="/login" [queryParams]="{method: 'dinoparc', next: next}" class="btn secondary" *ngIf="method !== AuthMethod.Dinoparc">
       <img src="/assets/login-methods/dinoparc.png"/>
-      <ng-container i18n="@@login.method.dinoparc">Sign in with Dinoparc</ng-container>
+      <ng-container i18n="Dinoparc login link@@login.method.dinoparc">Sign in with Dinoparc</ng-container>
     </a>
     <a routerLink="/login" [queryParams]="{method: 'hammerfest', next: next}" class="btn secondary" *ngIf="method !== AuthMethod.Hammerfest">
       <img src="/assets/login-methods/hammerfest.png"/>
-      <ng-container i18n="@@login.method.hammerfest">Sign in with Hammerfest</ng-container>
+      <ng-container i18n="Hammerfest login link@@login.method.hammerfest">Sign in with Hammerfest</ng-container>
     </a>
   </div>
 </etwin-small-layout>
