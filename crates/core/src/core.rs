@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::{Range, RangeFrom};
 
 pub type Instant = DateTime<Utc>;
+pub type Duration = chrono::Duration;
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]

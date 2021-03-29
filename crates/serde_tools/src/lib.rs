@@ -21,6 +21,44 @@ where
     .and_then(|string| Vec::from_hex(&string).map_err(|err| Error::custom(err.to_string())))
 }
 
+/// Serializes a duration as a fractional number of seconds.
+pub fn duration_to_seconds_float<S>(duration: &chrono::Duration, serializer: S) -> Result<S::Ok, S::Error>
+where
+  S: Serializer,
+{
+  let (neg, duration) = match duration.to_std() {
+    Ok(d) => (1.0, d),
+    Err(_) => (-1.0, (-*duration).to_std().expect("expected positive duration")),
+  };
+
+  let seconds = neg * duration.as_secs_f64();
+  serializer.serialize_f64(seconds)
+}
+
+/// Deserializes a fractional number of seconds as a duration.
+pub fn seconds_float_to_duration<'de, D>(deserializer: D) -> Result<chrono::Duration, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  use chrono::Duration;
+  let seconds = f64::deserialize(deserializer)?;
+
+  let min_secs = Duration::min_value().num_seconds() as f64;
+  let max_secs = Duration::max_value().num_seconds() as f64;
+  let duration = if seconds >= min_secs && seconds <= max_secs {
+    let nanos = seconds % 1_000_000_000.0;
+    // Duration::seconds can't panic because of the check above.
+    Duration::seconds(seconds as i64).checked_add(&Duration::nanoseconds(nanos as i64))
+  } else {
+    None
+  };
+
+  duration.ok_or_else(|| {
+    let err = Duration::from_std(std::time::Duration::from_secs(u64::MAX)).unwrap_err();
+    <D::Error as serde::de::Error>::custom(err)
+  })
+}
+
 /// Deserializes an optional field that can't be missing.
 ///
 /// The field must always be defined, either with a value or explicitly unset (e.g. with `null`).

@@ -11,6 +11,7 @@ pub mod core;
 pub mod dinoparc;
 pub mod email;
 pub mod hammerfest;
+pub mod job;
 pub mod link;
 pub mod oauth;
 pub mod password;
