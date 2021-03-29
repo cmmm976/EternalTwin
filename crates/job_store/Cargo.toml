@@ -1,0 +1,27 @@
+[package]
+name = "etwin_job_store"
+version = "0.0.1"
+authors = ["Moulins <arthur.heuillard@orange.fr>"]
+description = "Job store implementation"
+documentation = "https://github.com/eternal-twin/etwin"
+homepage = "https://github.com/eternal-twin/etwin"
+repository = "https://github.com/eternal-twin/etwin"
+readme = "./README.md"
+keywords = ["etwin"]
+license = "AGPL-3.0-or-later"
+edition = "2018"
+
+[features]
+default = ["mem"]
+mem = []
+
+[dependencies]
+async-trait = "0.1.48"
+etwin_core = { path = "../core", features = ["_serde", "sqlx"] }
+neon = { version = "0.8.0", optional = true, default-features = false, features = ["napi-runtime"] }
+serde_json = "1.0.64"
+
+[dev-dependencies]
+chrono = "0.4.19"
+tokio = { version = "1.4.0", features = ["macros", "rt"] }
+uuid = { version = "0.8.2", default-features = false }

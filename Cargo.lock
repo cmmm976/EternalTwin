@@ -676,6 +676,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "etwin_job_store"
+version = "0.0.1"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "etwin_core",
+ "neon",
+ "serde_json",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "etwin_link_store"
 version = "0.1.0"
 dependencies = [
