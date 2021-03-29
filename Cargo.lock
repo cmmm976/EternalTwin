@@ -681,9 +681,13 @@ version = "0.0.1"
 dependencies = [
  "async-trait",
  "chrono",
+ "etwin_config",
  "etwin_core",
+ "etwin_db_schema",
  "neon",
  "serde_json",
+ "serial_test",
+ "sqlx",
  "tokio",
  "uuid",
 ]

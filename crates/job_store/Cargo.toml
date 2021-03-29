@@ -12,16 +12,21 @@ license = "AGPL-3.0-or-later"
 edition = "2018"
 
 [features]
-default = ["mem"]
+default = ["mem", "pg"]
 mem = []
+pg = ["sqlx", "etwin_core/sqlx"]
 
 [dependencies]
 async-trait = "0.1.48"
 etwin_core = { path = "../core", features = ["_serde", "sqlx"] }
 neon = { version = "0.8.0", optional = true, default-features = false, features = ["napi-runtime"] }
 serde_json = "1.0.64"
+sqlx = { version = "0.5.1", optional = true, default-features = false, features = ["macros", "chrono", "offline", "postgres", "runtime-tokio-rustls", "uuid"] }
 
 [dev-dependencies]
 chrono = "0.4.19"
+etwin_config = { path = "../config" }
+etwin_db_schema = { path = "../db_schema" }
 tokio = { version = "1.4.0", features = ["macros", "rt"] }
 uuid = { version = "0.8.2", default-features = false }
+serial_test = "0.5.1"
