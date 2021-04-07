@@ -1,5 +1,5 @@
 <etwin-small-layout>
-  <div class="content">
+  <div class="content register">
     <form
       method="POST"
       enctype="application/x-www-form-urlencoded"
@@ -7,17 +7,21 @@
       [formGroup]="registrationForm"
       (ngSubmit)="onSubmit($event)"
     >
-      <div class="active_method" i18n="Registration page heading (with a username)@@register.username.heading">
+      <h1 class="active_method" i18n="Registration page heading (with a username)@@register.username.heading">
         Eternal-Twin registration
+      </h1>
+      <div class="info" i18n="@@register.editableProfileInfo">
+        <p>Don't worry: you'll be able to edit all the values below in your profile if you ever want to.</p>
       </div>
-      <div class="info" i18n="@@register.editableProfileInfo">Don't worry: you'll be able to edit all the values below in your profile if you ever want to.</div>
       <div>
         <label>
           <span i18n="Username field label@@label.username">Username</span>
-          <div class="info" i18n="@@register.usernameInfo">The identifier you want to use to sign-in. It must be a unique name containing only "a-z", "0-9" or "_".</div>
+          <div class="info" i18n="@@register.usernameInfo">
+            <p>The identifier you want to use to sign-in. It must be a unique name containing only "a-z", "0-9" or "_".</p>
+          </div>
           <input type="text" name="username" class="field" formControlName="username" required="required"
                  [minlength]="$RawUsername.minLength" [maxlength]="$RawUsername.maxLength" [pattern]="$RawUsername.pattern"/>
-          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error">
+          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="modal error">
             <div *ngIf="username.errors?.required" i18n="@@register.usernameRequired">
               The username is required.
             </div>
@@ -82,7 +86,7 @@
         Registration error: the username is invalid or already used, please report this error if it persists.
       </div>
       <div>
-        <a routerLink="/register" i18n="@@register.backToMethodSelection">Back</a>
+        <a routerLink="/register" class="btn tertiary" i18n="@@register.backToMethodSelection">Back</a>
       </div>
     </form>
   </div>
