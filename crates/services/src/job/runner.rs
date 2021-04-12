@@ -72,7 +72,7 @@ where
   /// the [`TaskRegistry`] associated with this runner, the behavior is unspecified.
   pub async fn submit(&self, task: StoredTaskState) -> Result<StoredTask, EtwinError> {
     let state = task;
-    let stored = self.0.job_store.create_task(&state, None).await?;
+    let stored = self.0.job_store.create_job(&state).await?;
 
     // Wake up the runner task if it is running.
     if self.0.status.load(SeqCst) == STATUS_RUNNING {
@@ -212,7 +212,7 @@ impl<TyJobStore: JobStore> State<TyJobStore> {
     futures::future::try_join_all(
       children
         .into_iter()
-        .map(|c| async move { self.runner.job_store.create_task(&c, Some(id)).await }),
+        .map(|c| async move { self.runner.job_store.create_subtask(&c, id).await }),
     )
     .await?;
 

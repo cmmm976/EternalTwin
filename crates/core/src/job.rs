@@ -10,6 +10,20 @@ use thiserror::Error;
 use serde::{Deserialize, Serialize};
 
 declare_new_uuid! {
+  pub struct JobId(Uuid);
+  pub type ParseError = JobIdParseError;
+  const SQL_NAME = "etwin_job_id";
+}
+
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct StoredJob {
+  pub id: JobId,
+  pub created_at: Instant,
+  pub root_task: TaskId,
+}
+
+declare_new_uuid! {
   pub struct TaskId(Uuid);
   pub type ParseError = TaskIdParseError;
   const SQL_NAME = "etwin_task_id";
@@ -48,6 +62,7 @@ impl TaskStatus {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ShortStoredTask {
   pub id: TaskId,
+  pub job_id: JobId,
   pub parent: Option<TaskId>,
   pub status: TaskStatus,
   pub status_message: Option<String>,
@@ -117,13 +132,14 @@ pub struct UpdateTaskOptions<'a> {
 #[async_trait]
 #[auto_impl(&, Arc)]
 pub trait JobStore: Send + Sync {
-  /// Creates a new task in the store, initially in the [`TaskStatus::Running`] state.
-  /// If a `parent` task is specified, it won't run until the new task completes.
-  async fn create_task(
-    &self,
-    task_state: &StoredTaskState,
-    parent: Option<TaskId>,
-  ) -> Result<ShortStoredTask, EtwinError>;
+  /// Creates a new job in the store, containing a single task
+  /// initially in the [`TaskStatus::Running`] status.
+  async fn create_job(&self, task_state: &StoredTaskState) -> Result<ShortStoredTask, EtwinError>;
+
+  /// Creates a new subtask in the store, initially in the [`TaskStatus::Running`] status.
+  /// It will be part of the job of the `parent` task, and will stop it from running
+  /// until it completes.
+  async fn create_subtask(&self, task_state: &StoredTaskState, parent: TaskId) -> Result<ShortStoredTask, EtwinError>;
 
   /// Tries to update the state of an existing task.
   ///
@@ -133,8 +149,15 @@ pub trait JobStore: Send + Sync {
   /// - returns [`UpdateTaskError::InvalidTransition`] if the task cannot transition into the requested state.
   async fn update_task(&self, options: &UpdateTaskOptions<'_>) -> Result<ShortStoredTask, UpdateTaskError>;
 
+  /// Tries to update the status of all tasks in the given job. Only tasks that
+  /// can transition to the required state are modified.
+  async fn update_job_status(&self, job: JobId, status: TaskStatus) -> Result<(), EtwinError>;
+
   /// Retrieves the given task from the store, or [`None`] if it doesn't exist.
   async fn get_task(&self, task: TaskId) -> Result<Option<StoredTask>, EtwinError>;
+
+  /// Retrieves the given job from the store, or [`None`] if it doesn't exist.
+  async fn get_job(&self, job: JobId) -> Result<Option<StoredJob>, EtwinError>;
 
   /// Retrieves the least recently updated task in the [`TaskStatus::Running`] state
   /// and whose children (if any) are all `Complete`d, or [`None`] if no such task exists.

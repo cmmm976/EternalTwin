@@ -116,7 +116,7 @@ async fn test_many_tasks() {
       for _ in 0..20 {
         api
           .job_service
-          .create_task(&auth, spawner_task::Kind::NAME, &task_options)
+          .create_job(&auth, spawner_task::Kind::NAME, &task_options)
           .await
           .unwrap();
       }

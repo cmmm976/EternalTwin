@@ -1,12 +1,26 @@
 COMMENT ON SCHEMA public IS '{"version": 15}';
 
-CREATE DOMAIN etwin_task_status AS VARCHAR(8) CHECK (value IN ('Running', 'Complete', 'Failed', 'Stopped'));
+CREATE DOMAIN etwin_job_id AS UUID;
 CREATE DOMAIN etwin_task_id AS UUID;
+CREATE DOMAIN etwin_task_status AS VARCHAR(8) CHECK (value IN ('Running', 'Complete', 'Failed', 'Stopped'));
+
+-- The list of long-running jobs.
+-- A job manages a single task tree.
+CREATE TABLE etwin_jobs (
+  -- The (unique) job ID
+  etwin_job_id etwin_job_id NOT NULL,
+  -- Job creation time
+  ctime INSTANT NOT NULL,
+
+  PRIMARY KEY (etwin_job_id)
+);
 
 -- The list of long-running tasks.
 CREATE TABLE etwin_tasks (
   -- The (unique) task ID
   etwin_task_id etwin_task_id NOT NULL,
+  -- The job managing this task.
+  etwin_job_id etwin_job_id NOT NULL,
   -- Task creation time
   ctime INSTANT NOT NULL,
   -- Task last access time
@@ -37,7 +51,8 @@ CREATE TABLE etwin_tasks (
 
   PRIMARY KEY (etwin_task_id),
   CHECK (atime >= ctime),
-  CONSTRAINT etwin_task__parent_task_id__fk FOREIGN KEY (parent_task_id) REFERENCES etwin_tasks(etwin_task_id) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT etwin_task__parent_task_id__fk FOREIGN KEY (parent_task_id) REFERENCES etwin_tasks(etwin_task_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT etwin_task__etwin_job_id__fk FOREIGN KEY (etwin_job_id) REFERENCES etwin_jobs(etwin_job_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX etwin_tasks__atime_running__idx ON etwin_tasks(atime) WHERE status = 'Running';

@@ -6,6 +6,7 @@ import { $Uint32 } from "kryo/lib/integer";
 import { RecordIoType, RecordType } from "kryo/lib/record";
 import { $Ucs2String } from "kryo/lib/ucs2-string";
 
+import { $JobId } from "./job-id";
 import { ShortStoredTask } from "./short-stored-task";
 import { StoredTaskState } from "./stored-task-state";
 import { $TaskId } from "./task-id";
@@ -16,6 +17,7 @@ export type StoredTask = ShortStoredTask & StoredTaskState;
 export const $StoredTask: RecordIoType<StoredTask> = new RecordType<StoredTask>({
   properties: {
     id: {type: $TaskId},
+    jobId: {type: $JobId},
     parent: {type: $TaskId, optional: true},
     status: {type: $TaskStatus},
     statusMessage: {type: $Ucs2String, optional: true},

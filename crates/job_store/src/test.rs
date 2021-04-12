@@ -1,6 +1,7 @@
 use chrono::{Duration, TimeZone, Utc};
 use etwin_core::job::{
-  JobStore, OpaqueTaskData, ShortStoredTask, StoredTaskState, TaskId, TaskStatus, UpdateTaskError, UpdateTaskOptions,
+  JobStore, OpaqueTaskData, ShortStoredTask, StoredJob, StoredTaskState, TaskId, TaskStatus, UpdateTaskError,
+  UpdateTaskOptions,
 };
 use etwin_core::{api::ApiRef, clock::VirtualClock};
 use uuid::Uuid;
@@ -75,9 +76,10 @@ where
     state: OpaqueTaskData::from_string(r#"{"state": null}"#.into()).unwrap(),
   };
 
-  let initial = api.job_store.create_task(&task, None).await.unwrap();
+  let initial = api.job_store.create_job(&task).await.unwrap();
   let expected = ShortStoredTask {
     id: initial.id,
+    job_id: initial.job_id,
     parent: None,
     status: TaskStatus::Running,
     status_message: None,
@@ -88,6 +90,16 @@ where
   };
   assert_eq!(initial, expected);
   assert_stored_task_eq(&api.job_store, &expected, &task).await;
+
+  let actual_job = api.job_store.get_job(initial.job_id).await.unwrap();
+  assert_eq!(
+    actual_job,
+    Some(StoredJob {
+      id: initial.job_id,
+      created_at: Utc.ymd(2021, 1, 1).and_hms(0, 0, 0),
+      root_task: initial.id,
+    })
+  );
 
   api.clock.as_ref().advance_by(Duration::seconds(1));
   task.state = OpaqueTaskData::from_string(r#"{"more_state": 100}"#.into()).unwrap();
@@ -105,6 +117,7 @@ where
     .unwrap();
   let expected = ShortStoredTask {
     id: initial.id,
+    job_id: initial.job_id,
     parent: None,
     status: TaskStatus::Running,
     status_message: None,
@@ -132,6 +145,7 @@ where
     .unwrap();
   let expected = ShortStoredTask {
     id: initial.id,
+    job_id: initial.job_id,
     parent: None,
     status: TaskStatus::Complete,
     status_message: Some("Completed!".into()),
@@ -182,12 +196,12 @@ where
   // Invalid parent.
   api
     .job_store
-    .create_task(&simple_task_state, Some(unknown))
+    .create_subtask(&simple_task_state, unknown)
     .await
     .unwrap_err();
 
   // Create a new task.
-  let task = api.job_store.create_task(&simple_task_state, None).await.unwrap().id;
+  let task = api.job_store.create_job(&simple_task_state).await.unwrap().id;
 
   assert_invalid!(unknown, TaskStatus::Running, 0 => UpdateTaskError::NotFound(_));
   assert_invalid!(task, TaskStatus::Running, 1 => UpdateTaskError::StepConflict { .. });
@@ -223,7 +237,10 @@ where
     ($(let $name:ident = $parent:expr;)*) => {
       $(
         simple_task_state.kind = stringify!($name).into();
-        let $name = api.job_store.create_task(&simple_task_state, $parent).await.unwrap().id;
+        let $name = match $parent {
+          None => api.job_store.create_job(&simple_task_state),
+          Some(parent) =>  api.job_store.create_subtask(&simple_task_state, parent),
+        }.await.unwrap().id;
         advance_clock();
       )*
     }
@@ -280,3 +297,5 @@ where
 
   assert!(api.job_store.get_next_task_to_run().await.unwrap().is_none());
 }
+
+// TODO: Tests for JobStore::update_job_status

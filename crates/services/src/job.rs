@@ -1,8 +1,11 @@
 use async_trait::async_trait;
 
-use etwin_core::auth::{AuthContext, UserAuthContext};
-use etwin_core::job::{JobStore, OpaqueTaskData, StoredTask, TaskId, TaskStatus, UpdateTaskOptions};
+use etwin_core::job::{JobId, JobStore, OpaqueTaskData, StoredTask, TaskId, TaskStatus, UpdateTaskOptions};
 use etwin_core::types::EtwinError;
+use etwin_core::{
+  auth::{AuthContext, UserAuthContext},
+  job::StoredJob,
+};
 
 mod erased;
 mod runner;
@@ -35,7 +38,7 @@ where
     }
   }
 
-  pub async fn create_task(
+  pub async fn create_job(
     &self,
     acx: &AuthContext,
     kind: &str,
@@ -50,6 +53,11 @@ where
   pub async fn get_task(&self, acx: &AuthContext, task: TaskId) -> Result<Option<StoredTask>, EtwinError> {
     Self::check_admin_auth(acx)?;
     self.runner.raw_store().get_task(task).await
+  }
+
+  pub async fn get_job(&self, acx: &AuthContext, job: JobId) -> Result<Option<StoredJob>, EtwinError> {
+    Self::check_admin_auth(acx)?;
+    self.runner.raw_store().get_job(job).await
   }
 
   pub async fn stop_task(&self, acx: &AuthContext, task: TaskId) -> Result<Option<StoredTask>, EtwinError> {
@@ -71,6 +79,12 @@ where
     };
     stored.short = store.update_task(&options).await?;
     Ok(Some(stored))
+  }
+
+  pub async fn stop_job(&self, acx: &AuthContext, job: JobId) -> Result<(), EtwinError> {
+    Self::check_admin_auth(acx)?;
+    let store = self.runner.raw_store();
+    store.update_job_status(job, TaskStatus::Stopped).await
   }
 
   pub fn pause_runner(&self, acx: &AuthContext) -> Result<(), EtwinError> {

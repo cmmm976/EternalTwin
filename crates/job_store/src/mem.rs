@@ -1,5 +1,4 @@
 use async_trait::async_trait;
-use etwin_core::types::EtwinError;
 use etwin_core::{
   clock::Clock,
   core::{Duration, Instant},
@@ -7,6 +6,10 @@ use etwin_core::{
     JobStore, ShortStoredTask, StoredTask, StoredTaskState, TaskId, TaskStatus, UpdateTaskError, UpdateTaskOptions,
   },
   uuid::UuidGenerator,
+};
+use etwin_core::{
+  job::{JobId, StoredJob},
+  types::EtwinError,
 };
 use std::collections::{BinaryHeap, HashMap};
 use std::sync::RwLock;
@@ -20,6 +23,8 @@ struct TaskPriority {
 }
 
 struct StoreState {
+  // All the stored jobs.
+  jobs: HashMap<JobId, StoredJob>,
   // All the stored tasks.
   tasks: HashMap<TaskId, StoredTask>,
   // Priority queue for currently running tasks.
@@ -37,6 +42,7 @@ enum QueueEntryState {
 impl StoreState {
   fn new() -> Self {
     Self {
+      jobs: HashMap::new(),
       tasks: HashMap::new(),
       running: BinaryHeap::new(),
       blocking_children: HashMap::new(),
@@ -84,23 +90,29 @@ impl StoreState {
     }
   }
 
-  fn add_task(&mut self, task: StoredTask) -> Result<(), EtwinError> {
+  fn add_task(&mut self, task: StoredTask) {
     let id = task.short.id;
     let priority = std::cmp::Reverse(task.short.created_at);
 
     if let Some(parent) = task.short.parent {
-      if !self.tasks.contains_key(&parent) {
-        return Err(format!("Unknown task ID or parent: {}", parent).into());
-      }
       let block = self.blocking_children.entry(parent).or_insert(0);
       *block = block.checked_add(1).expect("Blocking children overflow");
+    } else {
+      let old_job = self.jobs.insert(
+        task.short.job_id,
+        StoredJob {
+          id: task.short.job_id,
+          created_at: task.short.created_at,
+          root_task: task.short.id,
+        },
+      );
+      assert!(old_job.is_none());
     }
 
     let old_task = self.tasks.insert(id, task);
     assert!(old_task.is_none());
 
     self.running.push(TaskPriority { id, priority });
-    Ok(())
   }
 
   fn resolve_blocking_child(&mut self, parent: TaskId) {
@@ -117,6 +129,31 @@ impl StoreState {
         }
       }
     }
+  }
+
+  fn reset_transient_state(&mut self) {
+    let tasks = std::mem::replace(&mut self.tasks, HashMap::new());
+    self.jobs.clear();
+    self.running.clear();
+    self.blocking_children.clear();
+
+    for (_, task) in tasks.into_iter() {
+      self.add_task(task);
+    }
+  }
+}
+
+fn make_task_raw(id: TaskId, job_id: JobId, start_time: Instant, parent: Option<TaskId>) -> ShortStoredTask {
+  ShortStoredTask {
+    id,
+    job_id,
+    parent,
+    created_at: start_time,
+    advanced_at: start_time,
+    status: TaskStatus::Running,
+    status_message: None,
+    step_count: 0,
+    running_time: Duration::zero(),
   }
 }
 
@@ -142,29 +179,40 @@ where
   TyClock: Clock,
   TyUuidGenerator: UuidGenerator,
 {
-  async fn create_task(
-    &self,
-    task_state: &StoredTaskState,
-    parent: Option<TaskId>,
-  ) -> Result<ShortStoredTask, EtwinError> {
-    let task_id = TaskId::from_uuid(self.uuid_generator.next());
-    let start_time = self.clock.now();
-    let short_task = ShortStoredTask {
-      id: task_id,
-      created_at: start_time,
-      advanced_at: start_time,
-      status: TaskStatus::Running,
-      status_message: None,
-      step_count: 0,
-      running_time: Duration::zero(),
-      parent,
-    };
-
+  async fn create_job(&self, task_state: &StoredTaskState) -> Result<ShortStoredTask, EtwinError> {
     let mut state = self.state.write().unwrap();
+
+    let start_time = self.clock.now();
+    let job_id = JobId::from_uuid(self.uuid_generator.next());
+    let task_id = TaskId::from_uuid(self.uuid_generator.next());
+
+    let short_task = make_task_raw(task_id, job_id, start_time, None);
+
     state.add_task(StoredTask {
       short: short_task.clone(),
       state: task_state.clone(),
-    })?;
+    });
+    state.update_running_queue();
+
+    Ok(short_task)
+  }
+
+  async fn create_subtask(&self, task_state: &StoredTaskState, parent: TaskId) -> Result<ShortStoredTask, EtwinError> {
+    let mut state = self.state.write().unwrap();
+
+    let start_time = self.clock.now();
+    let task_id = TaskId::from_uuid(self.uuid_generator.next());
+    let job_id = match state.tasks.get(&parent) {
+      Some(parent) => parent.short.job_id,
+      None => return Err(format!("Unknown task ID for parent: {}", parent).into()),
+    };
+
+    let short_task = make_task_raw(task_id, job_id, start_time, Some(parent));
+
+    state.add_task(StoredTask {
+      short: short_task.clone(),
+      state: task_state.clone(),
+    });
     state.update_running_queue();
 
     Ok(short_task)
@@ -222,9 +270,32 @@ where
     Ok(task)
   }
 
+  async fn update_job_status(&self, job: JobId, status: TaskStatus) -> Result<(), EtwinError> {
+    let mut state = self.state.write().unwrap();
+
+    for task in state.tasks.values_mut() {
+      let task = &mut task.short;
+      if task.job_id == job && task.status != status && task.status.can_transition_to(status) {
+        task.status = status;
+        task.step_count = task
+          .step_count
+          .checked_add(1)
+          .ok_or_else(|| UpdateTaskError::Other("Task step count overflowed".into()))?;
+      }
+    }
+
+    state.reset_transient_state();
+    Ok(())
+  }
+
   async fn get_task(&self, task: TaskId) -> Result<Option<StoredTask>, EtwinError> {
     let state = self.state.read().unwrap();
     Ok(state.tasks.get(&task).cloned())
+  }
+
+  async fn get_job(&self, job: JobId) -> Result<Option<StoredJob>, EtwinError> {
+    let state = self.state.read().unwrap();
+    Ok(state.jobs.get(&job).cloned())
   }
 
   async fn get_next_task_to_run(&self) -> Result<Option<StoredTask>, EtwinError> {

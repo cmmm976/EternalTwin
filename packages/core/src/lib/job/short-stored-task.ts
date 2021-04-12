@@ -5,11 +5,13 @@ import { $Uint32 } from "kryo/lib/integer";
 import { RecordIoType, RecordType } from "kryo/lib/record";
 import { $Ucs2String } from "kryo/lib/ucs2-string";
 
+import { $JobId, JobId } from "./job-id";
 import { $TaskId, TaskId } from "./task-id";
 import { $TaskStatus, TaskStatus } from "./task-status";
 
 export interface ShortStoredTask {
   id: TaskId,
+  jobId: JobId,
   parent?: TaskId,
   status: TaskStatus,
   statusMessage?: string,
@@ -22,6 +24,7 @@ export interface ShortStoredTask {
 export const $ShortStoredTask: RecordIoType<ShortStoredTask> = new RecordType<ShortStoredTask>({
   properties: {
     id: {type: $TaskId},
+    jobId: {type: $JobId},
     parent: {type: $TaskId, optional: true},
     status: {type: $TaskStatus},
     statusMessage: {type: $Ucs2String, optional: true},
