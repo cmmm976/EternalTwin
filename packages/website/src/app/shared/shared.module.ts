@@ -7,6 +7,7 @@ import { EtwinBarComponent } from "./etwin-bar.component";
 import { EtwinFooterComponent } from "./etwin-footer.component";
 import { LanguagePickerComponent } from "./language-picker.component";
 import { MainLayoutComponent } from "./main-layout.component";
+import { MainMenuComponent } from "./main-menu.component";
 import { PaginationComponent } from "./pagination.component";
 import { SmallLayoutComponent } from "./small-layout.component";
 import { UnlinkDinoparcButtonComponent } from "./unlink-dinoparc-button.component";
@@ -20,6 +21,7 @@ import { UserLinkComponent } from "./user-link.component";
     EtwinFooterComponent,
     LanguagePickerComponent,
     MainLayoutComponent,
+    MainMenuComponent,
     PaginationComponent,
     SmallLayoutComponent,
     UnlinkDinoparcButtonComponent,
@@ -33,7 +35,7 @@ import { UserLinkComponent } from "./user-link.component";
     ReactiveFormsModule,
     RouterModule.forChild([]),
   ],
-  exports: [MainLayoutComponent, SmallLayoutComponent, RouterModule, PaginationComponent, UserLinkComponent, UnlinkHammerfestButtonComponent, UnlinkDinoparcButtonComponent, UnlinkTwinoidButtonComponent],
+  exports: [MainMenuComponent, MainLayoutComponent, SmallLayoutComponent, RouterModule, PaginationComponent, UserLinkComponent, UnlinkHammerfestButtonComponent, UnlinkDinoparcButtonComponent, UnlinkTwinoidButtonComponent],
 })
 export class SharedModule {
 }

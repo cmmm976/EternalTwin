@@ -23,7 +23,11 @@
     position: relative;
     align-self: flex-end;
 
-    img { display: block; }
+    img {
+      display: block;
+      width: auto;
+      height: auto;
+    }
 
     .npcTip {
       position: absolute;
