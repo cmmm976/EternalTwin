@@ -67,7 +67,7 @@ etwin-main-layout, etwin-small-layout {
     $bgColor: #6a100e;
 
     height: $bannerHeight + $borderHeight;
-    margin: 41px 0 42px 0;
+    margin-top: 41px;
     background-color: $bgColor;
 
     background-size: $bannerWidth $borderHeight, 1px $borderHeight, auto, 1px $bannerHeight;
@@ -114,7 +114,6 @@ etwin-main-layout, etwin-small-layout {
   max-width: $contentWidth;
   width: 88%;
   background-color: transparentize($deepGrey, .3);
-  border-top: 3px solid $red;
   border-radius: 6px;
 
   box-shadow: 0 0 18px 3px transparentize($lightViolet, .7);
