@@ -45,7 +45,7 @@ app-root {
   flex: 1;
 }
 
-etwin-main-layout, etwin-small-layout {
+etwin-main-layout, etwin-small-layout, etwin-sidebar-layout {
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -108,11 +108,50 @@ etwin-main-layout, etwin-small-layout {
   }
 }
 
-.content {
+etwin-sidebar-layout .container {
+  display: flex;
+
+  .content {
+    z-index: 2; //content shadow will stay ontop the sidebar
+    margin-bottom: 0;
+  } 
+
+  .sidebar {
+    display: flex;
+    position: sticky;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    min-width: 180px;
+    padding: 1.2em 0;
+
+    & > * {
+      padding: .6em 1.2em;
+      margin: .3em 0;
+      background: transparentize($deepBlack, .5);
+      border-radius: 6px 0 0 6px;
+
+      font-size: 1.1em;
+      font-weight: bold;
+      text-decoration: none !important;
+
+      transition: all .15s;
+
+      &:hover, &:focus, &:active {
+        color: $lightWhite;
+        background: $deepBlack;
+      }
+    }
+  }
+}
+
+etwin-main-layout .content, etwin-small-layout .content, etwin-sidebar-layout .container {
   margin: 0 auto 4.3em auto;
-  padding: 2.25em;
   max-width: $contentWidth;
   width: 88%;
+}
+
+.content {
+  padding: 2.25em;
   background-color: transparentize($deepGrey, .3);
   border-radius: 6px;
 
@@ -361,9 +400,13 @@ textarea {
   body {
     font-size: $fontSizeMobile;
   }
+
+  etwin-main-layout .content, etwin-small-layout .content, etwin-sidebar-layout .container {
+    width: 92%;
+  }
+
   .content {
     padding: 1.2em;
-    width: 92%;
     border-radius: 4px;
 
     box-shadow: 0 0 18px 3px transparentize($lightViolet, .7);
@@ -378,6 +421,28 @@ textarea {
 
     h3 {
       font-size: 1.5em;
+    }
+  }
+
+  etwin-sidebar-layout .container {
+    flex-direction: column;
+
+    .sidebar {
+      padding-top: 0;
+
+      & > * {
+        font-size: 1.3em;
+        margin: 0;
+        padding: .8em 1.2em;
+        border-bottom: 2px solid $darkGrey;
+        border-radius: 0;
+
+        &:first-child { border-radius: 6px 6px 0 0; }
+        &:last-child {
+          border-bottom: transparent;
+          border-radius: 0 0 6px 6px;
+        }
+      }
     }
   }
 

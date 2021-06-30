@@ -1,4 +1,4 @@
-<etwin-main-layout>
+<etwin-sidebar-layout>
   <ng-container *ngIf="user$ | async as user">
     <ng-container [ngSwitch]="user">
       <ng-container *ngSwitchCase="RESOLUTION_ERROR">
@@ -141,4 +141,4 @@
       </ng-container>
     </ng-container>
   </ng-container>
-</etwin-main-layout>
+</etwin-sidebar-layout>
