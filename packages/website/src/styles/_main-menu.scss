@@ -16,6 +16,7 @@
   #main-menu {
     width: 88%;
     max-width: $contentWidth;
+    min-height: 2.6em;
     margin: 0 auto;
   }
 
@@ -86,14 +87,15 @@
 
 nav {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   position: relative;
 
   li a, .label-toggle {
     display: flex;
     align-items: center;
-    min-height: 2.6em;
-    padding: .8em;
+    padding: .2em 1em;
+    border-radius: 5px;
 
     text-align: center;
     font-size: 1em;
@@ -106,13 +108,13 @@ nav {
     cursor: pointer;
 
     &:hover, &:focus {
-      background-color: $darkViolet;
+      background-color: transparentize($lightGrey, .6);
       color: $lightWhite;
       text-decoration: none;
     }
 
     &:active {
-      background-color: darken($mediumGrey, 8%);
+      background-image: linear-gradient(lighten($darkRed, 15%), $darkRed);
     }
 
   transition: all .15s;
