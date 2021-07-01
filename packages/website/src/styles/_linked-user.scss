@@ -33,3 +33,145 @@ etwin-linked-user, .linked-user {
     padding: 0 1em 1em 1em;
   }
 }
+
+
+.user-view {
+  .profile {
+    padding: 1em 0 1em 1em;
+    background-color: $deepBlack;
+    border: 1px solid $darkViolet;
+    border-bottom-width: 3px; 
+    border-radius: 6px;
+
+    box-shadow: 0 0 7px 0 $deepBlack;
+
+    .avatar {
+      float: left;
+      border: 1px solid $darkViolet;
+
+      img { display: block; }
+    }
+
+    .name-banner {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin: .5em 0;
+      padding: .2em 1em;
+      background-color: $darkViolet;
+
+      font-style: italic;
+
+      h1 {
+        margin: 0;
+        color: white;
+        font-size: 2.4em;
+        text-transform: none;
+        font-weight: bold;
+        letter-spacing: .01em;
+      }
+
+      .title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: .4em 0;
+
+        img {
+          margin-right: .4em;
+          padding: 3px;
+          background-color: transparentize(white, .75);
+          border-radius: 3px;
+        }
+      }
+    }
+
+    .actionBox {
+      float: left;
+      min-width: 40%;
+      margin: .2em .8em;
+    }
+
+    .alt-infos {
+      float: right;
+      margin: 1em 1.2em;
+      font-size: .9em;
+      color: $mediumViolet;
+
+      em {
+        font-style: normal;
+        color: $lightGrey;
+      }
+    }
+
+    .clear { clear: both; }
+
+    .bubble {
+      position: relative;
+      margin: .4em 1.2em .6em 0;
+      padding: .6em 1.2em;
+      font-size: .9em;
+      line-height: 1.45em;
+      color: lighten($lightGrey, 35%);
+      background-color: $darkGrey;
+      border: 1px solid $mediumGrey;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+
+      &::before { //triangle
+        $size: 8px;
+        content: "";
+        position: absolute;
+        top: -$size;
+        left: calc(50px - 8px); //center under the avatar
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 $size $size $size;
+        border-color: transparent transparent $mediumGrey transparent;
+      }
+    }
+
+    .medals {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin: 1.6em 1.2em .6em 0;
+
+      & > div {
+        width: calc(33% - 6px);
+        min-width: 220px;
+        min-height: 8em;
+        margin: .4em 0;
+
+        &.placeholder {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px dashed $darkGrey;
+          border-radius: 8px;
+
+          a {
+            display: none;
+            padding: .8em;
+            color: $mediumGrey;
+          }
+
+          &:hover a, &:focus a, &:active a { display: initial; }
+        }
+      }
+    }
+  }
+
+  .description {
+    margin: 0 .6em 2em;
+    padding: 1.2em;
+    background-color: $deepBlack;
+    border: 1px solid $darkViolet;
+    border-radius: 0 0 4px 4px;
+  }
+
+
+}

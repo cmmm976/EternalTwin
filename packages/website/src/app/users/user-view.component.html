@@ -1,33 +1,57 @@
 <etwin-main-layout>
   <ng-container *ngIf="user$ | async as user">
     <ng-container [ngSwitch]="user !== USER_NOT_FOUND ? user.type : USER_NOT_FOUND">
+
       <ng-container *ngSwitchCase="ObjectType.User">
-        <h1>{{user.displayName.current.value}}'s profile</h1>
-        <p>This is a user profile. This page is only a placeholder at the moment, but it will be improved once authentication is more reliable. This page will contain {{user.displayName.current.value}}'s messages and achievements.</p>
-        <div class="linked-users">
-          <ng-container *ngIf="user.links.twinoid.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.twinoid.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.hammerfestEs.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.hammerfestEs.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.hammerfestFr.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.hammerfestFr.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.hfestNet.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.hfestNet.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.dinoparcCom.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.dinoparcCom.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.enDinoparcCom.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.enDinoparcCom.current"></etwin-linked-user>
-          </ng-container>
-          <ng-container *ngIf="user.links.spDinoparcCom.current !== null">
-            <etwin-linked-user [userId]="user.id" [link]="user.links.spDinoparcCom.current"></etwin-linked-user>
-          </ng-container>
-        </div>
+        <section class="user-view">
+          <article class="profile">
+            <div class="avatar"><img src="/assets/avatar.jpg"></div>
+            <div class="name-banner">
+              <h1>{{user.displayName.current.value}}</h1>
+              <p class="title"><img src="http://mush.vg/img/icons/ui/fast_cycle.png"> T'es aux fraises</p>
+            </div>
+            <p class="alt-infos"><em>20 ans</em> | <em>Bruxelle</em> | <em>Belgique</em></p>
+            <div class="actionBox">
+              <a class="btn primary">Ajouter aux contacts</a>
+              <a class="btn icon primary"><img src="//data.twinoid.com/img/icons/mail.png"></a>
+            </div>
+            <div class="clear"></div>
+            <p class="bubble">This is a user profile. This page is only a placeholder at the moment, but it will be improved once authentication is more reliable. This page will contain {{user.displayName.current.value}}'s messages and achievements.</p>
+            <div class="medals">
+              <div class="placeholder"><a href="#">add a medal</a></div>
+              <div class="placeholder"><a href="#">add a medal</a></div>
+              <div class="placeholder"><a href="#">add a medal</a></div>
+            </div>
+          </article>
+
+          <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla pulvinar urna nec semper. Sed a mollis lorem, nec bibendum dolor. Nam feugiat felis a velit accumsan mollis in vel nisi. Sed scelerisque, enim vitae scelerisque cursus, nulla risus sollicitudin orci, ac pharetra massa velit eu dolor. Morbi commodo, purus at ultrices iaculis, justo sem mollis sem, ac sagittis erat metus ac quam. Phasellus quis neque et erat gravida mollis at a risus. Ut at lectus in lectus gravida varius id quis leo.</p>
+
+          <div class="linked-users">
+            <ng-container *ngIf="user.links.twinoid.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.twinoid.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.hammerfestEs.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.hammerfestEs.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.hammerfestFr.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.hammerfestFr.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.hfestNet.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.hfestNet.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.dinoparcCom.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.dinoparcCom.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.enDinoparcCom.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.enDinoparcCom.current"></etwin-linked-user>
+            </ng-container>
+            <ng-container *ngIf="user.links.spDinoparcCom.current !== null">
+              <etwin-linked-user [userId]="user.id" [link]="user.links.spDinoparcCom.current"></etwin-linked-user>
+            </ng-container>
+          </div>
+        </section>
       </ng-container>
+
       <ng-container *ngSwitchDefault>
         <h1>User not found</h1>
       </ng-container>
