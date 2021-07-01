@@ -66,7 +66,7 @@ etwin-linked-user, .linked-user {
       h1 {
         margin: 0;
         color: white;
-        font-size: 2.4em;
+        font-size: 2em;
         text-transform: none;
         font-weight: bold;
         letter-spacing: .01em;
@@ -87,15 +87,25 @@ etwin-linked-user, .linked-user {
       }
     }
 
-    .actionBox {
-      float: left;
-      min-width: 40%;
-      margin: .2em .8em;
+    .additional {
+      display: flex;
+      flex-flow: row wrap;
+      margin: 0.7em 1em;
+      padding-left: .6em;
+
+      a {
+        font-size: .75em;
+        padding-top: .5em;
+        padding-bottom: .5em;
+      }
     }
 
     .alt-infos {
-      float: right;
-      margin: 1em 1.2em;
+      flex: 1;
+      margin: auto 0;
+      padding: .3em 0;
+      text-align: right;
+      white-space: nowrap;
       font-size: .9em;
       color: $mediumViolet;
 
@@ -105,11 +115,14 @@ etwin-linked-user, .linked-user {
       }
     }
 
-    .clear { clear: both; }
+    .clear {
+      display: flex;
+      clear: both;
+    }
 
     .bubble {
       position: relative;
-      margin: .4em 1.2em .6em 0;
+      margin: .6em 1.2em .6em 0;
       padding: .6em 1.2em;
       font-size: .9em;
       line-height: 1.45em;
@@ -117,7 +130,7 @@ etwin-linked-user, .linked-user {
       background-color: $darkGrey;
       border: 1px solid $mediumGrey;
       border-bottom-width: 3px;
-      border-radius: 5px;
+      border-radius: 6px;
 
       &::before { //triangle
         $size: 8px;
@@ -172,6 +185,8 @@ etwin-linked-user, .linked-user {
     border: 1px solid $darkViolet;
     border-radius: 0 0 4px 4px;
   }
+}
 
-
+@media only screen and (max-width: $desktopBreakpoint) {
+  .user-view .profile .additional { margin: 1em 1em; }
 }
