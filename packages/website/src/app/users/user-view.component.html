@@ -8,23 +8,23 @@
             <div class="avatar"><img src="/assets/avatar.jpg"></div>
             <div class="name-banner">
               <h1>{{user.displayName.current.value}}</h1>
-              <p class="title"><img src="http://mush.vg/img/icons/ui/fast_cycle.png"> T'es aux fraises</p>
+              <p class="title"><img src="/assets/title_icon_placeholder.png"> We're working on it, we swear !</p>
             </div>
             <div class="additional">
-              <a class="btn primary">Ajouter aux contacts</a>
-              <a class="btn icon secondary"><img src="//data.twinoid.com/img/icons/mail.png"></a>
-              <p class="alt-infos"><em>20 ans</em> | <em>Bruxelle</em> | <em>Belgique</em></p>
+              <a class="btn primary disabled">Add to contacts</a>
+              <a class="btn icon secondary disabled"><img alt="private message" src="//data.twinoid.com/img/icons/mail.png"></a>
+              <p class="alt-infos"><em>?? years old</em> | <em>City</em> | <em>Country</em></p>
             </div>
             <div class="clear"></div>
             <p class="bubble">This is a user profile. This page is only a placeholder at the moment, but it will be improved once authentication is more reliable. This page will contain {{user.displayName.current.value}}'s messages and achievements.</p>
-            <div class="medals">
+            <!-- <div class="medals">
               <div class="placeholder"><a href="#">add a medal</a></div>
               <div class="placeholder"><a href="#">add a medal</a></div>
               <div class="placeholder"><a href="#">add a medal</a></div>
-            </div>
+            </div> -->
           </article>
 
-          <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla pulvinar urna nec semper. Sed a mollis lorem, nec bibendum dolor. Nam feugiat felis a velit accumsan mollis in vel nisi. Sed scelerisque, enim vitae scelerisque cursus, nulla risus sollicitudin orci, ac pharetra massa velit eu dolor. Morbi commodo, purus at ultrices iaculis, justo sem mollis sem, ac sagittis erat metus ac quam. Phasellus quis neque et erat gravida mollis at a risus. Ut at lectus in lectus gravida varius id quis leo.</p>
+          <p class="description"></p>
 
           <div class="linked-users">
             <ng-container *ngIf="user.links.twinoid.current !== null">
