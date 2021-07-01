@@ -25,26 +25,56 @@ etwin-forum-post, .etwin-forum-post {
 
   .post-meta {
     display: flex;
+    align-items: flex-start;
+    height: 2em;
+    margin-left: .6em;
+  }
+
+  .avatar {
+    border: 1px solid $deepBlack;
+
+    img {
+      display: block;
+      width: 70px;
+    }
+  }
+
+  .post-banner {
+    display: flex;
     align-items: center;
+    flex: 1;
+    margin: .4em 0;
+    padding: .1em 1em .1em .8em;
     background-color: darken($deepGrey, 2.5);
     color: $lightViolet;
-    padding: 2px 16px;
 
     .author {
       font-weight: $fontWeightBold;
-      flex-grow: 1;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      margin: 0 1.4em;
+      font-size: .85em;
+      font-style: italic;
+      color: lighten($mediumGrey, 15%);
+
+      img { padding-right: .4em;}
     }
 
     .time {
+      flex: 1;
       font-size: .7em;
       line-height: 1.25em;
-      color: #6f6f6f;
+      color: lighten($mediumGrey, 15%);
       text-align: right;
     }
   }
 
   .body, .deleted, .moderation {
-    padding: 14px 16px;
+    margin-left: calc(72px + .8em);
+    padding: .8em 1em .8em .6em;;
   }
 
   .deleted {
@@ -53,6 +83,15 @@ etwin-forum-post, .etwin-forum-post {
 
   .moderation {
     background-color: #470d0b;
+  }
+
+  .actionBox {
+    justify-content: flex-end !important;
+    margin: .5em 1em !important;
+
+      .btn {
+      font-size: .8em !important;
+    }
   }
 }
 
