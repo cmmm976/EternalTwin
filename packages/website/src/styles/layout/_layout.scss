@@ -1,0 +1,33 @@
+etwin-main-layout, etwin-small-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  & > .star-bg {
+    position: absolute;
+    mask-image: url("/assets/bg-star.svg");
+    mask-repeat: no-repeat;
+    mask-position: center -440px;
+    height: 600px;
+    width: 100%;
+    z-index: -10;
+    top: 0;
+  }
+}
+
+.content {
+  margin: 0 auto 4.3em auto;
+  padding: 2.25em;
+  max-width: $contentWidth;
+  width: 88%;
+
+  @media only screen and (max-width: $desktopBreakpoint) {
+    padding: 1.2em;
+    width: 92%;
+    border-radius: 4px;
+  }
+
+  & > h1:first-child {
+    margin-top: .2em;
+  }
+}

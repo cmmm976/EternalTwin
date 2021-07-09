@@ -1,15 +1,26 @@
 @import "~normalize.css/normalize.css";
-@import "./box-sizing";
-@import "./variables";
-@import "./fonts";
-@import "./etwin-bar";
-@import "./games";
+
+@import "./abstracts/variables";
+
+@import "./base/box-sizing";
+@import "./base/base";
+@import "./base/typography";
+
+@import "./components/button";
+@import "./components/linked-users";
+
+@import "./layout/etwin-bar";
+@import "./layout/header";
+@import "./layout/main-menu";
+@import "./layout/layout";
+@import "./layout/footer";
+@import "./layout/forms";
+
+@import "./pages/contribute";
+@import "./pages/documentation";
+@import "./pages/games";
+
+@import "./themes/theme";
+
 @import "./forum";
-@import "./contribute";
-@import "./documentation";
 @import "./linked-user";
-@import "./button";
-@import "./main-menu";
-@import "./footer";
-@import "./settings/index";
-@import "./themes/main";

@@ -1,0 +1,50 @@
+etwin-main-layout, etwin-small-layout {
+  & > header {
+    // The header is built in two parts :
+    // 1. Banner image and (red) background gradient, with a "background-image" property.
+    // 2. Bottom line and its gradient, in the "::before" pseudo-element.
+
+    // All THE COLOR PROPERTIES (background-color and background-image) are in the themes stylesheets.
+
+
+    $bannerHeight: 109px;
+    $bannerWidth: 1100px;
+    $borderHeight: 3px;
+
+    position: relative;
+    height: $bannerHeight;
+    padding-bottom: $borderHeight;
+    margin: 41px 0 42px 0;
+
+    background-size: auto, 100%;
+    background-repeat: no-repeat, repeat-x;
+    background-position: top center, top center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: $borderHeight;
+
+      background-size: $bannerWidth 100%;
+      background-repeat: repeat-y;
+      background-position: center;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 0;
+
+      a {
+        display: block;
+        text-align: center;
+        max-width: $bannerWidth / 2;
+        height: $bannerHeight;
+        color: transparent;
+        margin: auto;
+        overflow: hidden;
+      }
+    }
+  }
+}

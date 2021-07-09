@@ -1,0 +1,74 @@
+body {
+  color: $lightWhite;
+  background-color: $deepGrey;
+}
+
+etwin-main-layout, etwin-small-layout {
+  & > header {
+
+    $borderColor: #a39fb9;
+    $borderLightColor: #ffffff;
+    $bgShadowColor: #2d0706;
+    $bgColor: #6a100e;
+
+    background-color: $bgColor;
+    background-image:
+      url("/assets/banner.png"),
+      linear-gradient(lighten($bgShadowColor, 5%) 0%, $bgColor 68%, $bgColor 78%, lighten($bgShadowColor, 2%) 100%);
+
+    &::before {
+      background-color: $borderColor;
+      background-image: linear-gradient(to right, $borderColor, $borderLightColor 50%, $borderColor);
+    }
+  }
+}
+
+.star-bg {
+  background: $darkGrey;
+}
+
+.content {
+  background-color: transparentize($deepGrey, .3);
+  border-top: 3px solid $red;
+  border-radius: 6px;
+
+  box-shadow: 0 0 18px 3px transparentize($lightViolet, .7);
+}
+
+h1, h2 {
+  color: $red;
+}
+
+a {
+  color: $lightViolet;
+}
+
+code, pre {
+  background: $deepViolet;
+  border: 1px solid $darkViolet;
+}
+
+pre {
+  scrollbar-color: $lightWhite $mediumGrey;
+
+  &::-webkit-scrollbar-track { background: $mediumGrey; }
+  &::-webkit-scrollbar-thumb { background-color: $lightWhite; }
+}
+
+blockquote {
+  border-left: 3px solid $darkViolet;
+}
+
+input.field, textarea.field {
+  color: $lightWhite;
+  background-color: $darkGrey;
+  box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
+
+  &:hover, &:focus, &:active {
+    box-shadow: inset 0 0 0 2px $lightViolet;
+  }
+
+  &:focus, &:active {
+    background-color: $deepViolet;
+  }
+}

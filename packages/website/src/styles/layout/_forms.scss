@@ -1,0 +1,31 @@
+label {
+  display: block;
+  margin: 1rem 0;
+}
+
+input[type=email], input[type=text], input[type=password], input[type=submit], select {
+  width: 100%;
+  border: none;
+}
+
+input.field, textarea.field {
+  padding: .7em;
+  margin: .4em 0 .25em 0;
+  border-radius: .25em;
+  outline: none;
+  border: none;
+
+  transition: all .15s;
+}
+
+textarea.field {
+  height: 20vh;
+}
+
+textarea {
+  overflow: auto;
+  width: 100%;
+  resize: vertical;
+  min-height: 2em;
+  line-height: 1.4em;
+}

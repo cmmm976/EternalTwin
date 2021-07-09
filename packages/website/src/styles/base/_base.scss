@@ -1,0 +1,51 @@
+html {
+  min-height: 100%;
+  display: flex;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  min-width: 100%;
+}
+
+app-root {
+  flex: 1;
+}
+
+img {
+  max-width: 100%;
+}
+
+// ?????
+.error {
+  font-size: .85em;
+  line-height: 1.3em;
+  font-weight: 700;
+  letter-spacing: .015em;
+  padding: 9px;
+  border-radius: 4px;
+  background-color: $darkViolet;
+}
+
+// ?????
+.splitter {
+  width: 100%;
+  margin: 2.3em 0;
+  border-bottom: 2px solid $mediumGrey;
+  display: block;
+  clear: both;
+  height: 2px;
+  overflow: visible;
+  color: $lightWhite;
+  text-align: center;
+  line-height: .3em;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px $deepGrey;
+  font-size: .76em;
+  letter-spacing: .05em;
+
+  &.s {  margin: 1.4em 0; }
+  &.xl { margin: 3.8em 0; }
+}
