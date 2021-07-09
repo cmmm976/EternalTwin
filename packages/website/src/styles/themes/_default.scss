@@ -1,0 +1,27 @@
+$theme-default: (
+  "text-color": $lightWhite,
+  "background-color": $deepGrey,
+  "header-background-color": #6a100e,
+  "header-background-gradient": #2d0706,
+  "header-border-color": #a39fb9,
+  "header-border-gradient": #ffffff,
+
+  "generic-box-border-color": $mediumGrey,
+
+  "topbar-background-color": $deepBlack,
+  "topbar-border": 1px solid $red,
+  "topbar-button-text-color": $lightWhite,
+  "topbar-button-background-color": inherit,
+  "topbar-button-border": 1px solid $mediumGrey,
+  "topbar-button-focus-color": $darkViolet,
+
+  "star-bg-color": $darkGrey,
+  "layout-background-color": transparentize($deepGrey, .3),
+  "layout-border-top": 3px solid $red,
+  "layout-shadow": 0 0 18px 3px transparentize($lightViolet, .7),
+
+  "footer-background-color": $deepBlack,
+  "footer-box-color" : inherit,
+  "footer-box-border-color": $mediumViolet,
+  "footer-link-color": $lightViolet,
+);

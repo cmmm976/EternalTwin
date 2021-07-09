@@ -1,74 +1,138 @@
-body {
-  color: $lightWhite;
-  background-color: $deepGrey;
-}
 
-etwin-main-layout, etwin-small-layout {
-  & > header {
 
-    $borderColor: #a39fb9;
-    $borderLightColor: #ffffff;
-    $bgShadowColor: #2d0706;
-    $bgColor: #6a100e;
+@mixin forum-theme($theme) {
 
-    background-color: $bgColor;
-    background-image:
-      url("/assets/banner.png"),
-      linear-gradient(lighten($bgShadowColor, 5%) 0%, $bgColor 68%, $bgColor 78%, lighten($bgShadowColor, 2%) 100%);
+  & {
+    color: map_get( $theme, "text-color" );
+    background-color: map_get( $theme, "background-color" );
+  }
 
-    &::before {
-      background-color: $borderColor;
-      background-image: linear-gradient(to right, $borderColor, $borderLightColor 50%, $borderColor);
+  etwin-main-layout, etwin-small-layout {
+    & > header {
+
+      $background-color: map_get( $theme, "header-background-color" ); // #2d0706;
+      $background-gradient: map_get( $theme, "header-background-gradient" ); // #6a100e;
+      $border-color: map_get( $theme, "header-border-color" ); // #a39fb9;
+      $border-gradient: map_get( $theme, "header-border-gradient" ); // #ffffff;
+
+      background-color: $background-color;
+      background-image:
+        url("/assets/banner.png"),
+        linear-gradient(lighten($background-gradient, 5%) 0%, $background-color 68%, $background-color 78%, lighten($background-gradient, 2%) 100%);
+
+      &::before {
+        background-color: $border-color;
+        background-image: linear-gradient(to right, $border-color, $border-gradient 50%, $border-color);
+      }
     }
   }
-}
 
-.star-bg {
-  background: $darkGrey;
-}
-
-.content {
-  background-color: transparentize($deepGrey, .3);
-  border-top: 3px solid $red;
-  border-radius: 6px;
-
-  box-shadow: 0 0 18px 3px transparentize($lightViolet, .7);
-}
-
-h1, h2 {
-  color: $red;
-}
-
-a {
-  color: $lightViolet;
-}
-
-code, pre {
-  background: $deepViolet;
-  border: 1px solid $darkViolet;
-}
-
-pre {
-  scrollbar-color: $lightWhite $mediumGrey;
-
-  &::-webkit-scrollbar-track { background: $mediumGrey; }
-  &::-webkit-scrollbar-thumb { background-color: $lightWhite; }
-}
-
-blockquote {
-  border-left: 3px solid $darkViolet;
-}
-
-input.field, textarea.field {
-  color: $lightWhite;
-  background-color: $darkGrey;
-  box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
-
-  &:hover, &:focus, &:active {
-    box-shadow: inset 0 0 0 2px $lightViolet;
+  %box-style {
+    border-color: map_get( $theme, "generic-box-border-color" ); // $mediumGrey;
   }
 
-  &:focus, &:active {
-    background-color: $deepViolet;
+
+
+  etwin-bar {
+    background-color: map_get( $theme, "topbar-background-color" ); // $deepBlack;
+    border-bottom: map_get( $theme, "topbar-border" ); // 1px solid $red;
+
+    .button {
+      color: map_get( $theme, "topbar-button-text-color" ); // $lightWhite;
+      background-color: map_get( $theme, "topbar-button-background-color" ); // inherit;
+      border-left: map_get( $theme, "topbar-button-border" ); // 1px solid $mediumGrey;
+
+      &:hover, &:focus {
+        background-color: map_get( $theme, "topbar-button-focus-color" ); // $darkViolet;
+      }
+    }
+  }
+
+
+
+  footer {
+
+    &::before, etwin-footer {
+      background: map_get( $theme, "footer-background-color" ); // $deepBlack;
+    }
+
+    .box {
+      background-color: map_get( $theme, "footer-box-color" ); // inherit;
+      border-color: map_get( $theme, "footer-box-border-color" ); // $mediumViolet;
+    }
+
+    a {
+      color: map_get( $theme, "footer-link-color" ); // $lightViolet;
+    }
+  }
+
+
+
+  .star-bg {
+    background: map_get( $theme, "star-bg-color" ); // $darkGrey;
+  }
+
+  .content {
+    background-color: map_get( $theme, "layout-background-color" ); // transparentize($deepGrey, .3);
+    border-top: map_get( $theme, "layout-border-top" ); // 3px solid $red;
+
+    box-shadow: map_get( $theme, "layout-shadow" ); // 0 0 18px 3px transparentize($lightViolet, .7);
+  }
+
+
+
+  h1, h2 {
+    color: $red;
+  }
+
+  a {
+    color: $lightViolet;
+  }
+
+  code, pre {
+    background: $deepViolet;
+    border: 1px solid $darkViolet;
+  }
+
+  pre {
+    scrollbar-color: $lightWhite $mediumGrey;
+
+    &::-webkit-scrollbar-track { background: $mediumGrey; }
+    &::-webkit-scrollbar-thumb { background-color: $lightWhite; }
+  }
+
+  blockquote {
+    border-left: 3px solid $darkViolet;
+  }
+
+
+
+  input.field, textarea.field {
+    color: $lightWhite;
+    background-color: $darkGrey;
+    box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
+
+    &:hover, &:focus, &:active {
+      box-shadow: inset 0 0 0 2px $lightViolet;
+    }
+
+    &:focus, &:active {
+      background-color: $deepViolet;
+    }
+  }
+
+
+  article.contribute-item {
+    background: $deepBlack;
+  }
+
+
+}
+
+
+body {
+  @include forum-theme($theme-default);
+  &.theme-classic {
+    @include forum-theme($theme-classic);
   }
 }

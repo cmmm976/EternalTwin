@@ -4,15 +4,15 @@ footer {
   line-height: 1.45em;
   min-width: 100%;
 
-  &:before { /* adds the repeating waves pattern */
+  &:before { // adds the repeating waves pattern
     content: "";
     display: block;
     height: 46px;
     width: 100%;
-    background-image: url("/assets/footer_waves.svg");
-    background-size: 300px;
-    background-repeat: repeat-x;
-    background-position: top center;
+    mask-image: url("/assets/footer_waves.svg");
+    mask-size: 300px;
+    mask-repeat: repeat-x;
+    mask-position: top center;
   }
 
   a {
@@ -20,12 +20,11 @@ footer {
   }
 
   & > etwin-footer {
-    padding: 4.6em 2.4em;
-    background-color: $deepBlack;
-
     display: flex;
     justify-content: center;
     align-items: stretch;
+
+    padding: 4.6em 2.4em;
   }
 
   p:not(.box) {
@@ -34,29 +33,26 @@ footer {
   }
 
   .box {
-    margin: 7px 4px;
-    width: 152px;
-    padding: 1.4em;
-    border-radius: 4px;
-    border: 1px solid $mediumViolet;
-    border-bottom-width: 4px;
-
     display: flex;
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
 
+    @extend %box-style;
+
+    margin: 7px 4px;
+    width: 152px;
+
     &.description {
       width: 392px;
 
-      &:before { /* adds the etwin logo and a gradient the same color as the background to hide the purple border */
+      // adds the etwin logo
+      &:before {
         content:"";
         margin: -68px auto 0 auto;
         width: 80px;
         height: 80px;
-        background-image:
-          url("/assets/etwin_icon.svg"),
-          radial-gradient(circle, $deepBlack 40%, transparentize($deepBlack, 1) 75%);
+        background-image: url("/assets/etwin_icon_bw.svg");
         background-repeat: no-repeat;
         background-position: center;
       }
@@ -82,7 +78,7 @@ footer {
 
       &.description {
         min-width: 95%;
-        order: 0; /* places the block ontop all others */
+        order: 0; // places the main block ontop all others
       }
     }
   }

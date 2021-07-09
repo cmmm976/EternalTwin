@@ -1,31 +1,35 @@
-.content {
-  etwin-linked-dinoparc-settings, etwin-linked-hammerfest-settings, etwin-linked-twinoid-settings {
-    display: grid;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    margin: 1em 0;
-    padding: 1em;
-    grid-template-areas:
-    'icon website'
-    'icon user'
-    'icon actions';
-    grid-template-columns: auto 1fr;
-    column-gap: 1em;
+etwin-linked-user, .linked-user {
+  display: block;
+}
 
-    .icon {
-      grid-area: icon;
-    }
+etwin-linked-dinoparc-settings, etwin-linked-hammerfest-settings, etwin-linked-twinoid-settings,
+etwin-linked-user a, .linked-user a {
+  @extend %box-style;
+  display: grid;
+  margin: 1em 0;
+  // padding: 1em;
+  grid-template-areas:
+  'icon website'
+  'icon user'
+  'icon actions';
+  grid-template-columns: auto 1fr;
+  column-gap: 1em;
+  row-gap: .3em;
 
-    h3 {
-      grid-area: website;
-      margin: 0;
-    }
+  .icon {
+    grid-area: icon;
+  }
 
-    .user {
-      grid-area: user;
-    }
+  h3 {
+    grid-area: website;
+    margin: 0;
+  }
 
-    .actions {
-      grid-area: actions;
-    }
+  .user, strong {
+    grid-area: user;
+  }
+
+  .actions {
+    grid-area: actions;
   }
 }

@@ -1,8 +1,5 @@
 etwin-bar {
   height: 40px;
-  background-color: $deepBlack;
-  color: $lightViolet;
-  border-bottom:1px solid $red;
   position: fixed;
   top: 0;
   width: 100%;
@@ -15,11 +12,12 @@ etwin-bar {
     height: inherit;
     align-items: center;
     justify-content: flex-end;
+
+    & > * { display: flex; }
   }
 
   .button {
-    font-weight: 800;
-    color: $lightWhite;
+    font-weight: $font-weight-bold;
     margin: 0;
     padding: 6px 12px;
     height: 28px;
@@ -29,14 +27,11 @@ etwin-bar {
     cursor: pointer;
     height: auto;
     width: auto;
-    background-color:$deepBlack;;
     border: none;
-    border-left: 1px solid $mediumGrey;
     
-    transition: color .15s, background-color .15s;
+    transition: all .15s;
 
     &:hover, &:focus {
-      background-color: $darkViolet;
       text-decoration: none;
     }
   }

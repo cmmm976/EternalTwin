@@ -1,12 +1,15 @@
 @import "~normalize.css/normalize.css";
 
 @import "./abstracts/variables";
+@import "./abstracts/placeholders";
 
 @import "./base/box-sizing";
 @import "./base/base";
 @import "./base/typography";
 
 @import "./components/button";
+@import "./components/gamebox";
+@import "./components/inputs";
 @import "./components/linked-users";
 
 @import "./layout/etwin-bar";
@@ -14,13 +17,13 @@
 @import "./layout/main-menu";
 @import "./layout/layout";
 @import "./layout/footer";
-@import "./layout/forms";
 
 @import "./pages/contribute";
 @import "./pages/documentation";
 @import "./pages/games";
 
+@import "./themes/default";
+@import "./themes/classic";
 @import "./themes/theme";
 
 @import "./forum";
-@import "./linked-user";

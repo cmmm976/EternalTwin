@@ -20,6 +20,7 @@ etwin-main-layout, etwin-small-layout {
   padding: 2.25em;
   max-width: $contentWidth;
   width: 88%;
+  border-radius: 6px;
 
   @media only screen and (max-width: $desktopBreakpoint) {
     padding: 1.2em;
