@@ -4,8 +4,52 @@
 
   & {
     color: map_get( $theme, "text-color" );
-    background-color: map_get( $theme, "background-color" );
+    background: map_get( $theme, "background-color" );
   }
+
+
+  
+  a {
+    color: map_get( $theme, "link-color" ); // $lightViolet;
+  }
+
+  h1, h2 {
+    color: map_get( $theme, "main-headers-color" ); // $red;
+  }
+
+  code, pre {
+    background: map_get( $theme, "pre-background-color" ); // $deepViolet;
+    border: map_get( $theme, "pre-border" ); // 1px solid $darkViolet;
+  }
+
+  pre {
+    scrollbar-color: $lightWhite $mediumGrey;
+
+    &::-webkit-scrollbar-track { background: $mediumGrey; }
+    &::-webkit-scrollbar-thumb { background-color: $lightWhite; }
+  }
+
+  blockquote {
+    border-left-color: map_get( $theme, "blockquote-border-color" ); // 3px solid $darkViolet;
+  }
+
+
+
+  input.field, textarea.field {
+    color: map_get( $theme, "input-text-color" ); // $lightWhite;
+    background-color: map_get( $theme, "input-background-color" ); // $darkGrey;
+    box-shadow: map_get( $theme, "input-box-shadow" ); // inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
+
+    &:hover, &:focus, &:active {
+      box-shadow: map_get( $theme, "input-hover-box-shadow" ); // inset 0 0 0 2px $lightViolet;
+    }
+
+    &:focus, &:active {
+      background-color: map_get( $theme, "input-focus-background-color" ); // $deepViolet;
+    }
+  }
+
+
 
   etwin-main-layout, etwin-small-layout {
     & > header {
@@ -51,6 +95,7 @@
 
 
   footer {
+    color: map_get( $theme, "footer-text-color" );
 
     &::before, etwin-footer {
       background: map_get( $theme, "footer-background-color" ); // $deepBlack;
@@ -79,60 +124,16 @@
     box-shadow: map_get( $theme, "layout-shadow" ); // 0 0 18px 3px transparentize($lightViolet, .7);
   }
 
-
-
-  h1, h2 {
-    color: $red;
-  }
-
-  a {
-    color: $lightViolet;
-  }
-
-  code, pre {
-    background: $deepViolet;
-    border: 1px solid $darkViolet;
-  }
-
-  pre {
-    scrollbar-color: $lightWhite $mediumGrey;
-
-    &::-webkit-scrollbar-track { background: $mediumGrey; }
-    &::-webkit-scrollbar-thumb { background-color: $lightWhite; }
-  }
-
-  blockquote {
-    border-left: 3px solid $darkViolet;
-  }
-
-
-
-  input.field, textarea.field {
-    color: $lightWhite;
-    background-color: $darkGrey;
-    box-shadow: inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
-
-    &:hover, &:focus, &:active {
-      box-shadow: inset 0 0 0 2px $lightViolet;
-    }
-
-    &:focus, &:active {
-      background-color: $deepViolet;
-    }
-  }
-
-
   article.contribute-item {
-    background: $deepBlack;
+    background:  map_get( $theme, "contribute-item-background-color" ); // $deepBlack;
   }
-
-
 }
 
 
+
 body {
-  @include forum-theme($theme-default);
-  &.theme-classic {
+  @include forum-theme($theme-classic);
+  &.theme-default {
     @include forum-theme($theme-classic);
   }
 }

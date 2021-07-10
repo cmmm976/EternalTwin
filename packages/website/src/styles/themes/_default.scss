@@ -1,6 +1,19 @@
 $theme-default: (
   "text-color": $lightWhite,
   "background-color": $deepGrey,
+  
+  "link-color": $lightViolet,
+  "main-headers-color": $red,
+  "pre-background-color": $deepViolet,
+  "pre-border": 1px solid $darkViolet,
+  "blockquote-border-color": $darkViolet,
+  
+  "input-text-color": $lightWhite,
+  "input-background-color": $darkGrey,
+  "input-box-shadow": inset 0 0 0 1px $lightViolet,
+  "input-hover-box-shadow": inset 0 0 0 2px $lightViolet,
+  "input-focus-background-color": $deepViolet,
+
   "header-background-color": #6a100e,
   "header-background-gradient": #2d0706,
   "header-border-color": #a39fb9,
@@ -20,8 +33,11 @@ $theme-default: (
   "layout-border-top": 3px solid $red,
   "layout-shadow": 0 0 18px 3px transparentize($lightViolet, .7),
 
+  "footer-text-color": $lightWhite,
   "footer-background-color": $deepBlack,
   "footer-box-color" : inherit,
   "footer-box-border-color": $mediumViolet,
   "footer-link-color": $lightViolet,
+
+  "contribute-item-background-color": $deepBlack,
 );

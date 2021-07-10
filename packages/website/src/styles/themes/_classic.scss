@@ -1,13 +1,65 @@
+$darkRed: #8a0a16;
+$deepRed: #690206;
+
+$lightBeige: #dddbd8;
+$beige: darken($lightBeige, 3.15);
+$darkBeige: saturate(darken($lightBeige, 6), 3);
+
+$blue: #4e5162;
+$darkBlue: #3b4151;
+$deepBlue: #111317;
+
+$lightOrange: #fe9e00;
+$orange: #fe7d00;
+$darkOrange: #bd3d00;
+
+
 $theme-classic: (
-  "text-color": green,
-  "background-color": $deepGrey,
-  "header-background-color": blue,
-  "header-background-gradient": #6a100e,
-  "header-border-color": #a39fb9,
-  "header-border-gradient": #ffffff,
-  "generic-box-border-color": $mediumGrey,
-  "footer-background-color": yellow,
+  "text-color": $darkBlue,
+  "background-color": $lightBeige,
+  
+  "link-color": $darkOrange,
+  "main-headers-color": $blue,
+  "pre-background-color": $lightBeige,
+  "pre-border": 1px solid $lightWhite,
+  "blockquote-border-color": $darkOrange,
+
+  "input-text-color": $darkBlue,
+  "input-background-color": $darkBeige,
+  "input-box-shadow": inset 0 0 0 1px $blue,
+  "input-hover-box-shadow": inset 0 0 0 2px $blue,
+  "input-focus-background-color": $lightWhite,
+
+  "header-background-color": $darkOrange,
+  "header-background-gradient": darken($darkOrange, 16),
+  "header-border-color": $orange,
+  "header-border-gradient": $lightOrange,
+
+  "generic-box-border-color": $darkBlue,
+
+  "topbar-background-color": $deepBlack,
+  "topbar-border": 1px solid $red,
+  "topbar-button-text-color": $lightWhite,
+  "topbar-button-background-color": inherit,
+  "topbar-button-border": 1px solid $mediumGrey,
+  "topbar-button-focus-color": $deepBlue,
+
+  "star-bg-color": transparentize($darkBeige, .2),
+  "layout-background-color": transparentize($beige, .3),
+  "layout-border-top": none,
+  "layout-shadow": 0 0 18px 3px transparentize($blue, .7),
+
+  "footer-text-color": $lightWhite,
+  "footer-background-color": $blue,
   "footer-box-color" : inherit,
-  "footer-box-border-color": $mediumViolet,
-  "footer-link-color": $lightViolet,
+  "footer-box-border-color": $deepBlack,
+  "footer-link-color": $orange,
+
+  "contribute-item-background-color": $lightWhite,
 );
+
+body {
+  article.contribute-item {
+    box-shadow: 0 0 15px 0 #b1a69a;
+  }
+}
