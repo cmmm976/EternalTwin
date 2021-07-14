@@ -1,0 +1,10 @@
+nav.breadcrumb {
+  font-size: .8em;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  padding: .1em .6em;
+  border-radius: 4px;
+  background-color: $deepBlack;
+
+  a { font-weight: $font-weight-bold; }
+}

@@ -1,0 +1,48 @@
+.forum-list, .section-list, .thread-list {
+  list-style: none;
+  padding-left: 0 !important;
+
+  li {
+    border-bottom: 2px solid lighten($deepGrey, 5);
+  }
+
+  li:first-child {
+    border-top: 2px solid lighten($deepGrey, 5);
+  }
+
+  a {
+    color: $lightWhite;
+    padding: 14px 8px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
+
+    transition: background-color .15s;
+
+    &:hover, &:focus, &:focus-within {
+      text-decoration: none;
+      background-color: transparentize($deepBlack, .7);
+    }
+
+    .name {
+      flex-grow: 1;
+    }
+
+    .count {
+      display: inline-block;
+      text-align: center;
+      color: $lightGrey;
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      white-space: pre;
+      margin-left: 1em;
+      padding: 1px 1em;
+      min-width: 5.2em;
+      border-radius: 4px;
+      border: 2px solid transparentize($darkGrey, .45);
+    }
+
+  }
+}

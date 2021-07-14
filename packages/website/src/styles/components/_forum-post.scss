@@ -1,0 +1,45 @@
+etwin-forum-post, .etwin-forum-post {
+  $meta-color: $lightViolet;
+  $meta-background: $deepViolet;
+  $border-color: $lightViolet;
+  $spacing: 0.5rem;
+
+  display: block;
+  background-color:$darkGrey;
+  border-bottom: 3px solid $deepBlack;
+  border-radius: 4px;
+  margin: 2.7 * $spacing 0;
+  padding: 9px 0 0 0;
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    background-color: darken($deepGrey, 2.5);
+    color: $lightViolet;
+    padding: 2px 16px;
+
+    .author {
+      font-weight: $fontWeightBold;
+      flex-grow: 1;
+    }
+
+    .time {
+      font-size: .7em;
+      line-height: 1.25em;
+      color: #6f6f6f;
+      text-align: right;
+    }
+  }
+
+  .body, .deleted, .moderation {
+    padding: 14px 16px;
+  }
+
+  .deleted {
+    background-color: black;
+  }
+
+  .moderation {
+    background-color: #470d0b;
+  }
+}
