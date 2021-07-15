@@ -1,25 +1,19 @@
+body {
+  color: var(--text-color);
+  background-color: var(--background-color);
 
 
-@mixin forum-theme($theme) {
-
-  & {
-    color: map_get( $theme, "text-color" );
-    background: map_get( $theme, "background-color" );
-  }
-
-
-  
   a {
-    color: map_get( $theme, "link-color" ); // $lightViolet;
+    color: var(--link-color); // $lightViolet;
   }
 
   h1, h2 {
-    color: map_get( $theme, "main-headers-color" ); // $red;
+    color: var(--main-headers-color); // $red;
   }
 
   code, pre {
-    background: map_get( $theme, "pre-background-color" ); // $deepViolet;
-    border: map_get( $theme, "pre-border" ); // 1px solid $darkViolet;
+    background: var(--pre-background-color); // $deepViolet;
+    border: var(--pre-border); // 1px solid $darkViolet;
   }
 
   pre {
@@ -30,22 +24,22 @@
   }
 
   blockquote {
-    border-left-color: map_get( $theme, "blockquote-border-color" ); // 3px solid $darkViolet;
+    border-left-color: var(--blockquote-border-color); // 3px solid $darkViolet;
   }
 
 
 
   input.field, textarea.field {
-    color: map_get( $theme, "input-text-color" ); // $lightWhite;
-    background-color: map_get( $theme, "input-background-color" ); // $darkGrey;
-    box-shadow: map_get( $theme, "input-box-shadow" ); // inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
+    color: var(--input-text-color); // $lightWhite;
+    background-color: var(--input-background-color); // $darkGrey;
+    box-shadow: var(--input-box-shadow); // inset 0 0 0 1px $lightViolet;  /*Inset shadow, simulates a white border*/
 
     &:hover, &:focus, &:active {
-      box-shadow: map_get( $theme, "input-hover-box-shadow" ); // inset 0 0 0 2px $lightViolet;
+      box-shadow: var(--input-hover-box-shadow); // inset 0 0 0 2px $lightViolet;
     }
 
     &:focus, &:active {
-      background-color: map_get( $theme, "input-focus-background-color" ); // $deepViolet;
+      background-color: var(--input-focus-background-color); // $deepViolet;
     }
   }
 
@@ -53,41 +47,41 @@
 
   etwin-main-layout, etwin-small-layout {
     & > header {
-
-      $background-color: map_get( $theme, "header-background-color" ); // #2d0706;
-      $background-gradient: map_get( $theme, "header-background-gradient" ); // #6a100e;
-      $border-color: map_get( $theme, "header-border-color" ); // #a39fb9;
-      $border-gradient: map_get( $theme, "header-border-gradient" ); // #ffffff;
-
-      background-color: $background-color;
+/*
+      $background-color: var(--header-background-color); // #2d0706;
+      $background-gradient: var(--header-background-gradient); // #6a100e;
+      $border-color: var(--header-border-color); // #a39fb9;
+      $border-gradient: var(--header-border-gradient); // #ffffff;
+*/
+      background-color: var(--header-background-color);
       background-image:
         url("/assets/banner.png"),
-        linear-gradient(lighten($background-gradient, 5%) 0%, $background-color 68%, $background-color 78%, lighten($background-gradient, 2%) 100%);
+        linear-gradient(var(--header-background-gradient) 0%, var(--header-background-color) 68%, var(--header-background-color) 78%, var(--header-background-gradient) 100%);
 
       &::before {
-        background-color: $border-color;
-        background-image: linear-gradient(to right, $border-color, $border-gradient 50%, $border-color);
+        background-color: var(--header-border-color);
+        background-image: linear-gradient(to right, var(--header-border-color), var(--header-border-gradient) 50%, var(--header-border-color));
       }
     }
   }
 
   %box-style {
-    border-color: map_get( $theme, "generic-box-border-color" ); // $mediumGrey;
+    border-color: var(--generic-box-border-color); // $mediumGrey;
   }
 
 
 
   etwin-bar {
-    background-color: map_get( $theme, "topbar-background-color" ); // $deepBlack;
-    border-bottom: map_get( $theme, "topbar-border" ); // 1px solid $red;
+    background-color: var(--topbar-background-color); // $deepBlack;
+    border-bottom: var(--topbar-border); // 1px solid $red;
 
     .button {
-      color: map_get( $theme, "topbar-button-text-color" ); // $lightWhite;
-      background-color: map_get( $theme, "topbar-button-background-color" ); // inherit;
-      border-left: map_get( $theme, "topbar-button-border" ); // 1px solid $mediumGrey;
+      color: var(--topbar-button-text-color); // $lightWhite;
+      background-color: var(--topbar-button-background-color); // inherit;
+      border-left: var(--topbar-button-border); // 1px solid $mediumGrey;
 
       &:hover, &:focus {
-        background-color: map_get( $theme, "topbar-button-focus-color" ); // $darkViolet;
+        background-color: var(--topbar-button-focus-color); // $darkViolet;
       }
     }
   }
@@ -95,45 +89,36 @@
 
 
   footer {
-    color: map_get( $theme, "footer-text-color" );
+    color: var(--footer-text-color);
 
     &::before, etwin-footer {
-      background: map_get( $theme, "footer-background-color" ); // $deepBlack;
+      background: var(--footer-background-color); // $deepBlack;
     }
 
     .box {
-      background-color: map_get( $theme, "footer-box-color" ); // inherit;
-      border-color: map_get( $theme, "footer-box-border-color" ); // $mediumViolet;
+      background-color: var(--footer-box-color); // inherit;
+      border-color: var(--footer-box-border-color); // $mediumViolet;
     }
 
     a {
-      color: map_get( $theme, "footer-link-color" ); // $lightViolet;
+      color: var(--footer-link-color); // $lightViolet;
     }
   }
 
 
 
   .star-bg {
-    background: map_get( $theme, "star-bg-color" ); // $darkGrey;
+    background: var(--star-bg-color); // $darkGrey;
   }
 
   .content {
-    background-color: map_get( $theme, "layout-background-color" ); // transparentize($deepGrey, .3);
-    border-top: map_get( $theme, "layout-border-top" ); // 3px solid $red;
+    background-color: var(--layout-background-color); // transparentize($deepGrey, .3);
+    border-top: var(--layout-border-top); // 3px solid $red;
 
-    box-shadow: map_get( $theme, "layout-shadow" ); // 0 0 18px 3px transparentize($lightViolet, .7);
+    box-shadow: var(--layout-shadow); // 0 0 18px 3px transparentize($lightViolet, .7);
   }
 
   article.contribute-item {
-    background:  map_get( $theme, "contribute-item-background-color" ); // $deepBlack;
-  }
-}
-
-
-
-body {
-  @include forum-theme($theme-classic);
-  &.theme-default {
-    @include forum-theme($theme-classic);
+    background:  var(--contribute-item-background-color); // $deepBlack;
   }
 }

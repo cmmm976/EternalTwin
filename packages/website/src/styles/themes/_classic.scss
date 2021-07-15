@@ -1,3 +1,5 @@
+$theme-name: "classic";
+
 $darkRed: #8a0a16;
 $deepRed: #690206;
 
@@ -14,8 +16,8 @@ $orange: #fe7d00;
 $darkOrange: #bd3d00;
 
 
-$theme-classic: (
-  "text-color": $darkBlue,
+$theme-variables: (
+  "text-color": $deepBlue,
   "background-color": $lightBeige,
   
   "link-color": $darkOrange,
@@ -44,7 +46,7 @@ $theme-classic: (
   "topbar-button-border": 1px solid $mediumGrey,
   "topbar-button-focus-color": $deepBlue,
 
-  "star-bg-color": transparentize($darkBeige, .2),
+  "star-bg-color": transparentize($darkBeige, .4),
   "layout-background-color": transparentize($beige, .3),
   "layout-border-top": none,
   "layout-shadow": 0 0 18px 3px transparentize($blue, .7),
@@ -58,8 +60,24 @@ $theme-classic: (
   "contribute-item-background-color": $lightWhite,
 );
 
-body {
+%adding {
+  & {
+    background-image: linear-gradient(#ffead6 0%, #d8d8d7 0.3%, #f6f6f6 1%, transparent);
+    background-position: center 150px;
+    background-size: 100% 500px;
+    background-repeat: no-repeat;
+  }
+
   article.contribute-item {
     box-shadow: 0 0 15px 0 #b1a69a;
   }
+}
+
+
+body.theme-#{$theme-name} {
+  @each $var, $value in $theme-variables {
+    --#{$var}: #{$value};
+  }
+
+  @extend %adding;
 }

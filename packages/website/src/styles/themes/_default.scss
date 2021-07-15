@@ -1,4 +1,4 @@
-$theme-default: (
+$theme-variables: (
   "text-color": $lightWhite,
   "background-color": $deepGrey,
   
@@ -41,3 +41,10 @@ $theme-default: (
 
   "contribute-item-background-color": $deepBlack,
 );
+
+
+body {
+  @each $var, $value in $theme-variables {
+    --#{$var}: #{$value};
+  }
+}
