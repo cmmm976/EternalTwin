@@ -4,9 +4,13 @@
       <ng-container *ngSwitchCase="true">
         <h1>{{section.displayName}}</h1>
         <ol class="thread-list">
-          <li *ngFor="let thread of section.threads.items">
+          <li *ngFor="let thread of section.threads.items" class="pin">
             <a [routerLink]="['', 'forum', 'threads', thread.id]">
-              <span class="name">{{thread.title}}</span>
+              <span>
+                <span class="name">{{thread.title}}</span>
+                <span class="source">in <a>Tagada</a></span>
+              </span>
+              <span class="activity"><span>latest: <a>Tagada</a>, </span><span>2h ago</span></span>
               <span class="count">{{thread.posts.count}} posts</span>
             </a>
           </li>

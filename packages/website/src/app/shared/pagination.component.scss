@@ -7,7 +7,10 @@ $desktopBreakpoint: 768px;
 
   flex-wrap: nowrap;
 
-  .btn > img { padding: 0; }
+  .btn > img {
+    padding: 0;
+    width: auto;
+  }
   .current {
     flex: 4;
     text-transform: none;
@@ -20,7 +23,7 @@ $desktopBreakpoint: 768px;
     //}
   }
   .previous, .next {
-    max-width: $colWidth-alt;
+    // max-width: $colWidth-alt;
     &:not([disabled]):not(.disabled) {
       &:hover, &:focus, { background-color: transparentize($green, .93); }
       &:active, { background-color: transparentize($green, .87); }
@@ -32,7 +35,7 @@ $desktopBreakpoint: 768px;
     }
   }
   .first, .last {
-    max-width: $colWidth-alt;
+    // max-width: $colWidth-alt;
     &:not([disabled]):not(.disabled) {
       &:hover, &:focus, { background-color: transparentize($orange, .93); }
       &:active, { background-color: transparentize($orange, .87); }

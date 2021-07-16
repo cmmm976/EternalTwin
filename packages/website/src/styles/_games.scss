@@ -175,20 +175,19 @@ article.tridiv {
   }
 }
 
-article.game:hover,
-article.game:active,
-article.game:focus,
-article.game:focus-within {
-  .face {
-    box-shadow: inset 0 0 8px 0 rgba(255, 255, 255, 0.8);
+article.game, article.game-forum {
+  &:hover, &:active, &:focus,& :focus-within {
+    .face {
+      box-shadow: inset 0 0 8px 0 rgba(255, 255, 255, 0.8);
 
-    &.ft:before {
-      background-position: 70% 100%, center;
+      &.ft:before {
+        background-position: 70% 100%, center;
+      }
     }
-  }
 
-  .scene {
-    transform:rotateX(-12deg) rotateY(34deg);
+    .scene {
+      transform:rotateX(-12deg) rotateY(34deg);
+    }
   }
 }
 

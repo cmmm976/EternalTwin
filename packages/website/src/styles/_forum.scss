@@ -61,39 +61,54 @@ etwin-forum-post, .etwin-forum-post {
   padding-left: 0 !important;
 
   li {
-    border-bottom: 2px solid #1f1f1f;
+    border-bottom: 2px solid transparentize($lightWhite, .9);
   }
 
   li:first-child {
-    border-top: 2px solid #1f1f1f;
+    border-top: 2px solid transparentize($lightWhite, .9);
   }
 
-  a {
-    color: $lightWhite;
-    padding: 14px 8px;
-    width: 100%;
+  li > a {
     display: flex;
+    flex-flow: row wrap;
     align-items: center;
+    justify-content: space-between;
+    color: $lightWhite;
+    padding: .5em;
+    width: 100%;
     font-size: 1.1em;
 
     transition: background-color .15s;
 
     &:hover, &:focus, &:focus-within {
       text-decoration: none;
-      background-color: transparentize($deepBlack, .7);
+      background-color: transparentize($lightWhite, .9);
+    }
+
+    & > span {
+      margin: .3em 0;
+    }
+
+    & > span:first-child { // If the title cannot be entirely displayed, it will ellipsis (...)
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .name {
-      flex-grow: 1;
+      padding-right: .5em;
     }
 
-    .count {
-      display: inline-block;
+    .source, .activity, .count {
       text-align: center;
       color: $lightGrey;
       font-size: .85rem;
-      font-weight: 600;
       letter-spacing: .04em;
+      white-space: pre;
+    }
+
+    .activity, .count {
       white-space: pre;
       margin-left: 1em;
       padding: 1px 1em;
@@ -102,6 +117,88 @@ etwin-forum-post, .etwin-forum-post {
       border: 2px solid transparentize($darkGrey, .45);
     }
 
+    .count { font-weight: 600; }
+
+    @media only screen and (max-width: $contentWidth) {
+      .activity > span:first-child { display: none; }
+    }
+
+    @media only screen and (max-width: $contentWidth / 2) {
+      .activity { display: none; }
+    }
+  }
+
+  li.pin .name {
+    font-weight: $fontWeightBold;
+
+    &::before {
+      margin-right: .4em;
+      content:"";
+      font-family: "Font Awesome 5 Free Solid";
+      font-size: 1rem;
+      color: $orange;
+    }
+  }
+}
+
+.game-forum {
+  position: relative;
+  flex: 1;
+  margin: 1em !important;
+  margin-top: 3.5em !important;
+  padding: 1.4em;
+  min-width: calc(472px - 2em);
+  background: $deepBlack;
+  border-radius: 4px;
+  border: 1px solid $mediumGrey;
+  border-bottom-width: 5px;
+
+  .forum-meta {
+    margin: 0 0 2em 6.5em;
+
+    * { margin: 0; }
+
+    p {
+      font-weight: $fontWeightBold;
+    }
+  }
+
+  &#eternalfest {
+    border-color: #2a2484;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#2a2484, .4) 15%, transparent );
+  }
+
+  &#dinoparc {
+    border-color: #d2ae86;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#d2ae86, .4) 15%, transparent );
+  }
+
+  &#mjrt {
+    border-color: #e4e4e4;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#e4e4e4, .4) 15%, transparent );
+  }
+
+  &#myhordes {
+    border-color: #650021;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#650021, .4) 15%, transparent );
+  }
+
+  &#dinorpg {
+    border-color: #578722;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#578722, .4) 15%, transparent );
+  }
+
+  &#cafejeux {
+    border-color: #403a43;
+    background-image: radial-gradient( farthest-corner at -40% -40%, transparentize(#403a43, .1) 15%, transparent );
+  }
+
+  .tridiv {
+    position: absolute;
+    top: -2em;
+    left: .8em;
+    transform: scale(.6);
+    transform-origin: top left;
   }
 }
 
