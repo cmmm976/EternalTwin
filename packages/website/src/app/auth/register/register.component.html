@@ -1,18 +1,54 @@
 <etwin-small-layout>
-  <div class="content">
-    <div class="active_method" i18n="Registration page heading@@register.heading">
-      Eternal-Twin registration
+  <div class="content register">
+    <div class="progress alt">
+      <span class="current">1</span>
+      <div class="line"></div>
+      <span>2</span>
+      <div class="line"></div>
+      <span>3</span>
+      <div class="line"></div>
+      <span>4</span>
     </div>
-    <div class="info" i18n="@@register.efWarning">
-      If you played on Eternalfest, your account was imported automatically and you should <a routerLink="/login" [queryParams]="{method: 'hammerfest'}">sign-in with Hammerfest</a>.
+    <h1 class="active_method" i18n="Registration page heading@@register.heading">
+      Eternal-Twin registration
+    </h1>
+    <!-- <div class="progress">
+      <span>1</span>
+      <div class="line"></div>
+      <span class="current">2</span>
+      <div class="line"></div>
+      <span>3</span>
+      <div class="line"></div>
+      <span>4</span>
+    </div> -->
+    <p class="modal">
+      <a routerLink="/login" i18n="@@register.loginLink">Already have an account? Sign-in here</a>
+    </p>
+    <div class="modal" i18n="@@register.efWarning">
+      <p>If you played on Eternalfest, your account was imported automatically and you should <a routerLink="/login" [queryParams]="{method: 'hammerfest'}">sign-in with Hammerfest</a>.</p>
     </div>
     <label>
-      <span i18n="@@register.selectMethod">Select your preferred authentication method</span>
+      <p i18n="@@register.selectMethod">Eternal-Twin allows two distinct identification methods. You can either use your regular email adress or a unique name identifier. Once your account is created, the identification method can be changed at any time in your account settings.</p>
     </label>
-    <a routerLink="/register/username" class="btn" i18n="@@register.method.username">Pick a username</a>
-    <a routerLink="/register/email" class="btn" i18n="@@register.method.email">Use my email address (Soon)</a>
-    <p>
-      <a routerLink="/login" i18n="@@register.loginLink">Already have an account? Sign-in</a>
-    </p>
+
+    <article class="register-choice email">
+      <h3>With your email adress</h3>
+      <p>Your adress will remain private, and will be requested only on login, or for account recovery.</p>
+      <label class="email">
+        <input type="text" name="email" class="field email" />
+      </label>
+      <a routerLink="/register/email" class="btn">Continue</a>
+    </article>
+
+    <article class="register-choice username">
+      <h3>With a unique name identifier</h3>
+      <p>Your name identifier will be requested on login, or for account recovery. Note that you can use a different display name, under which other users will see you, during the next step of your registration.</p>
+      <label class="username">
+        <input type="text" name="username" class="field username" />
+      </label>
+      <a routerLink="/register/username" class="btn">Continue</a>
+    </article>
+    <!-- <a routerLink="/register/username" class="btn" i18n="@@register.method.username">Pick a username</a>
+    <a routerLink="/register/email" class="btn" i18n="@@register.method.email">Use my email address (Soon)</a> -->
   </div>
 </etwin-small-layout>

@@ -1,15 +1,15 @@
-/* Edition icons by A7 v1.0 - made with Fontello and Font Awesome */
+/* Edition icons by A7 v1.1 - made with Fontello, Font Awesome and Typicons */
 
 @font-face {
   font-family: 'fontello';
   font-weight: normal;
   font-style: normal;
-  src: url('/assets/fonts/edition-icons-a7-fontello.eot?27046898');
-  src: url('/assets/fonts/edition-icons-a7-fontello.eot?27046898#iefix') format('embedded-opentype'),
-       url('/assets/fonts/edition-icons-a7-fontello.woff2?27046898') format('woff2'),
-       url('/assets/fonts/edition-icons-a7-fontello.woff?27046898') format('woff'),
-       url('/assets/fonts/edition-icons-a7-fontello.ttf?27046898') format('truetype'),
-       url('/assets/fonts/edition-icons-a7-fontello.svg?27046898#fontello') format('svg');
+  src: url('/assets/fonts/edition-icons-a7-fontello.eot?49008029');
+  src: url('/assets/fonts/edition-icons-a7-fontello.eot?49008029#iefix') format('embedded-opentype'),
+       url('/assets/fonts/edition-icons-a7-fontello.woff2?49008029') format('woff2'),
+       url('/assets/fonts/edition-icons-a7-fontello.woff?49008029') format('woff'),
+       url('/assets/fonts/edition-icons-a7-fontello.ttf?49008029') format('truetype'),
+       url('/assets/fonts/edition-icons-a7-fontello.svg?49008029#fontello') format('svg');
 }
 
 .icon-1-bold:before { content: '\e800'; } /* '' */
@@ -27,3 +27,8 @@
 .icon-13-flag-rod:before { content: '\e80c'; } /* '' */
 .icon-14-flag-header:before { content: '\e80d'; } /* '' */
 .icon-15-downarrow:before { content: '\e80e'; } /* '' */
+.icon-16-info:before { content: '\e80f'; } /* '' */
+.icon-17-tick:before { content: '\e810'; } /* '' */
+.icon-18-cross:before { content: '\e811'; } /* '' */
+.icon-19-friend:before { content: '\e812'; } /* '' */
+.icon-20-not-friend:before { content: '\e813'; } /* '' */

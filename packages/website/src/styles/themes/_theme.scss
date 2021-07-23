@@ -71,9 +71,9 @@
     }
   }
 
-  %box-style {
+  /* %box-style {
     border-color: map_get( $theme, "generic-box-border-color" ); // $mediumGrey;
-  }
+  } */
 
 
 
@@ -132,8 +132,8 @@
 
 
 body {
-  @include forum-theme($theme-classic);
-  &.theme-default {
+  @include forum-theme($theme-default);
+  &.theme-classic {
     @include forum-theme($theme-classic);
   }
 }

@@ -1,0 +1,63 @@
+.modal, .success, .error {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 1.2em 0;
+  font-size: .9em;
+  color: lighten($lightGrey, 25%);
+  border: 1px solid darken($lightGrey, 15%);
+  border-radius: 5px;
+
+  & > p, & > * { margin: .3em .5em; }
+
+  &::before {
+    display: flex;
+    content: '\e80f';
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2em;
+    padding: .3em 0;
+    font-family: fontello;
+    font-size: 1.3rem;
+    background: transparentize($lightGrey, .8);
+    border-radius: 4px 0 0 4px;
+  }
+
+  &.error {
+    border-color: $red;
+
+    animation: modal-pop-in .15s ease-out 0s 1 normal;
+
+    &::before {
+      content: '\e811';
+      color: lighten($red, 10%);
+      background: transparentize($red, .75);
+    }
+  }
+
+  &.success {
+    border-color: $green;
+
+    animation: modal-pop-in .15s ease-out 0s 1 normal;
+
+    &::before {
+      content: '\e810';
+      color: lighten($green, 10%);
+      background: transparentize($green, .8);
+    }
+  }
+}
+
+input + .modal { margin-top: .25em; }
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(.5em);
+  }
+  to {
+    opacity: default;
+    transform: translateY(0);
+  }
+}

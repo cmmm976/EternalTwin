@@ -13,6 +13,8 @@
 @import "./components/gamebox";
 @import "./components/inputs";
 @import "./components/linked-users";
+@import "./components/modal";
+@import "./components/splitter";
 @import "./components/text-editor";
 @import "./components/thread-list";
 
@@ -26,6 +28,7 @@
 @import "./pages/documentation";
 @import "./pages/forum";
 @import "./pages/games";
+@import "./pages/register";
 
 @import "./themes/default";
 @import "./themes/classic";

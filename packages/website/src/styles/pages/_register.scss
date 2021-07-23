@@ -1,0 +1,140 @@
+.content.register {
+  position: relative;
+  border-top: 0;
+
+  max-width: 632px !important;
+
+  h1 { font-size: 2.6em; }
+
+  .register-choice {
+    margin: 2.6em 0;
+
+    @extend %box-style;
+    border-color: $mediumViolet;
+    background: $deepBlack;
+
+    h3 {
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+
+    label input {
+      font-size: 1.2em;
+      font-weight: 600;
+    }
+
+    label.username {
+      position: relative;
+
+      input { padding-left: 2.3em; }
+
+      &::before {
+        content: "@";
+        position: absolute;
+        margin-left: .65em;
+        top: calc(50% - .55em);
+        font-size: 1.25em;
+        font-weight: $font-weight-bold;
+        opacity: .6;
+      }
+    }
+
+    .btn {
+      width: 100%;
+      margin: 1em 0;
+    }
+  }
+
+  .progress {
+    $current-color: $lightViolet;
+    $pending-color: $lightGrey;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2em 4em;
+
+    @media only screen and (max-width: $desktopBreakpoint) {
+      margin-left: .5em;
+      margin-right: .5em;
+    }
+
+    .line {
+      flex: 1;
+      max-width: 22%;
+      min-height: 3px;
+      margin: 0 -1em;
+      background-color: $current-color;
+    }
+
+    span {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.2em;
+      min-height: 2.2em;
+      border-radius: 49.5%;
+      font-size: 1.4em;
+      font-weight: $font-weight-bold;
+      text-shadow: 0 0 8px $mediumViolet;
+      background-color: $current-color;
+      cursor: default;
+
+      transform: scale(.65);
+
+      &.current {
+        transform: scale(1);
+        animation: to-current .7s ease .4s 1 both;
+      }
+
+      &.current ~ span {
+        color: $lightGrey;
+        background-color: $deepGrey;
+        border: 3px solid $pending-color;
+      }
+
+      &.current ~ .line {
+        background-color: $pending-color;
+      }
+    }
+
+    @keyframes to-current {
+      0% {
+        color: $pending-color;
+        background-color: $deepGrey;
+        border: 3px solid $pending-color;
+        transform: scale(.65);
+        box-shadow: 0 0 0 0 $deepBlack;
+      }
+
+      75% {
+        transform: scale(1.2);
+        box-shadow: 0 0 8px 0 $deepBlack;
+      }
+
+      100% {
+        color: $lightWhite;
+        background-color: $current-color;
+        border: 3px solid transparent;
+        transform: scale(1);
+        box-shadow: 0 0 0 0 $deepBlack;
+      }
+    }
+  }
+
+  .progress.alt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 6.25em;
+    transform: translateY(-50%);
+
+    @media only screen and (max-width: $desktopBreakpoint) {
+      padding-left: 1.7em;
+      padding-right: 1.7em;
+    }
+  }
+}
