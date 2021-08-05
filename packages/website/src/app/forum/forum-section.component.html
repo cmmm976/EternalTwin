@@ -6,8 +6,8 @@
         <ol class="thread-list">
           <li *ngFor="let thread of section.threads.items" class="pin">
             <a [routerLink]="['', 'forum', 'threads', thread.id]">
-              <span>
-                <span class="name">{{thread.title}}</span>
+              <span class="name">
+                <span>{{thread.title}} </span><br />
                 <span class="source">in <a>Tagada</a></span>
               </span>
               <span class="activity"><span>latest: <a>Tagada</a>, </span><span>2h ago</span></span>

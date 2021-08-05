@@ -89,21 +89,20 @@ etwin-forum-post, .etwin-forum-post {
       margin: .3em 0;
     }
 
-    & > span:first-child { // If the title cannot be entirely displayed, it will ellipsis (...)
+    .name { // If the title cannot be entirely displayed, it will ellipsis (...)
       flex: 1;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-    }
 
-    .name {
-      padding-right: .5em;
+      br { display: none; }
     }
 
     .source, .activity, .count {
       text-align: center;
       color: $lightGrey;
       font-size: .85rem;
+      font-weight: $fontWeightRegular;
       letter-spacing: .04em;
       white-space: pre;
     }
@@ -125,14 +124,16 @@ etwin-forum-post, .etwin-forum-post {
 
     @media only screen and (max-width: $contentWidth / 2) {
       .activity { display: none; }
+      .name br { display: initial; }
     }
   }
 
-  li.pin .name {
-    font-weight: $fontWeightBold;
+  li.pin {
 
-    &::before {
-      margin-right: .4em;
+    .name { font-weight: $fontWeightBold; }
+
+    & > a::before {
+      margin-right: .7em;
       content:"";
       font-family: "Font Awesome 5 Free Solid";
       font-size: 1rem;
