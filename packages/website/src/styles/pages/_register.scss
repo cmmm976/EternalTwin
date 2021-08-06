@@ -46,7 +46,7 @@
   }
 
   .progress {
-    $current-color: $lightViolet;
+    $current-color: $orange;
     $pending-color: $lightGrey;
 
     display: flex;
@@ -85,7 +85,11 @@
 
       &.current {
         transform: scale(1);
-        animation: to-current .7s ease .4s 1 both;
+        animation:
+          to-current .7s ease .4s 1 both,
+          flash 4s ease-in-out .25s infinite
+        ;
+        
       }
 
       &.current ~ span {
@@ -98,7 +102,7 @@
         background-color: $pending-color;
       }
     }
-
+  
     @keyframes to-current {
       0% {
         color: $pending-color;
@@ -118,8 +122,13 @@
         background-color: $current-color;
         border: 3px solid transparent;
         transform: scale(1);
-        box-shadow: 0 0 0 0 $deepBlack;
       }
+    }
+
+    @keyframes flash {
+      0% { box-shadow: 0 0 0 0 transparentize($current-color, 1); }
+      15% { box-shadow: 0 0 0 8px transparentize($current-color, .5); }
+      40% { box-shadow: 0 0 0 0 transparentize($current-color, 1); }
     }
   }
 
