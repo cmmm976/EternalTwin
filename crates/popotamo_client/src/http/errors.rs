@@ -21,5 +21,9 @@ pub enum ScraperError {
   #[error("HTTP Error")]
   HttpError(#[from] reqwest::Error),
   #[error("Missing profile user link")]
-  MissingProfileUserIdLink
+  MissingProfileUserIdLink,
+  #[error("Missing h2 selector on user page")]
+  MissingH2Selector,
+  #[error("Missing profile username")]
+  MissingProfileUsername
 }

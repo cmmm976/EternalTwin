@@ -94,12 +94,37 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
   let profile_user_id = profile_user_id.ok_or_else(|| ScraperError::InvalidUserLink(profile_user_id_href.to_string()))?;
   let profile_user_id = PopotamoUserId::from_str(profile_user_id).map_err(|_| ScraperError::InvalidUserId(profile_user_id.to_string()))?;
 
+  let profile_username_h2 = doc
+    .select(selector!("h2.mainsheet"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingH2Selector)?;
+
+  let profile_username_text = profile_username_h2
+    .text()
+    .nth(5)
+    .ok_or(ScraperError::MissingProfileUsername)?;
+
+  
+  let profile_username_no_spaces = profile_username_text
+      .split(" ")
+      .nth(1)
+      .ok_or(ScraperError::MissingProfileUsername)?;
+
+  let profile_username_clean = profile_username_no_spaces
+    .split("\n")
+    .nth(0)
+    .ok_or(ScraperError::MissingProfileUsername)?;
+
+
+  let profile_username: PopotamoUsername = profile_username_clean
+    .parse()
+    .map_err(|_| ScraperError::InvalidUsername(profile_username_clean.to_string()))?;
 
   let profile = PopotamoProfile {
     user: ShortPopotamoUser {
       server,
       id: profile_user_id,
-      username: "todo".parse().unwrap(),
+      username: profile_username,
     },
   };
 
