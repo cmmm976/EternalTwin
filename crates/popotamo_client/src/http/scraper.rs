@@ -73,10 +73,32 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
 
   let ScraperContext { server, session } = scrape_context(root)?;
 
+  let profile_user_id_link = doc
+    .select(selector!("a.position"))
+    .next()
+    .ok_or( ScraperError::MissingProfileUserIdLink)?;
+
+  let profile_user_id_href = profile_user_id_link.value().attr("href").ok_or(ScraperError::MissingLinkHref)?;
+
+  let profile_user_id_url = PopotamoUrls::new(server)
+    .parse_from_root(profile_user_id_href)
+    .map_err(|_| ScraperError::InvalidUserLink(profile_user_id_href.to_string()))?;
+
+  let profile_user_id_url_string: String = profile_user_id_url.to_string();
+
+  let profile_user_id: Option<&str> = profile_user_id_url_string
+    .split("=")
+    .nth(1);
+
+    
+  let profile_user_id = profile_user_id.ok_or_else(|| ScraperError::InvalidUserLink(profile_user_id_href.to_string()))?;
+  let profile_user_id = PopotamoUserId::from_str(profile_user_id).map_err(|_| ScraperError::InvalidUserId(profile_user_id.to_string()))?;
+
+
   let profile = PopotamoProfile {
     user: ShortPopotamoUser {
       server,
-      id: "0".parse().unwrap(),
+      id: profile_user_id,
       username: "todo".parse().unwrap(),
     },
   };
@@ -96,7 +118,8 @@ mod test {
   use test_generator::test_resources;
 
   #[test_resources("./test-resources/scraping/popotamo/user/*/")]
-  fn test_scrape_profile(path: &str) {
+  fn test_scrape_profile(path: &str) 
+  {
     let path: PathBuf = Path::join(Path::new("../.."), path);
     let value_path = path.join("value.json");
     let html_path = path.join("main.html");

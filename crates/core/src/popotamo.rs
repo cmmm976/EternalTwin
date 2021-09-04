@@ -32,7 +32,7 @@ pub struct PopotamoUserIdRef {
 declare_new_string! {
   pub struct PopotamoUsername(String);
   pub type ParseError = PopotamoUsernameParseError;
-  // TODO: Pattern
+  // TODO: Pattern - Ask if there are usernames longer than 8 characters
   const PATTERN = r"^[0-9A-Za-z_-]{1,8}$";
   const SQL_NAME = "popotamo_username";
 }

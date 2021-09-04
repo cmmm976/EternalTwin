@@ -20,4 +20,6 @@ pub enum ScraperError {
   InvalidUserLink(String),
   #[error("HTTP Error")]
   HttpError(#[from] reqwest::Error),
+  #[error("Missing profile user link")]
+  MissingProfileUserIdLink
 }
