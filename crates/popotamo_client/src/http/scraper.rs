@@ -11,7 +11,8 @@ use scraper::{ElementRef, Html, Selector};
 use std::str::FromStr;
 
 #[derive(Debug)]
-struct ScraperContext {
+
+pub(crate) struct ScraperContext {
   server: PopotamoServer,
   session: Option<PopotamoSessionUser>,
 }
@@ -68,10 +69,7 @@ fn scrape_context(doc: ElementRef) -> Result<ScraperContext, ScraperError> {
   Ok(ScraperContext { server, session })
 }
 
-pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, ScraperError> {
-  let root = doc.root_element();
-
-  let ScraperContext { server, session } = scrape_context(root)?;
+pub(crate) fn scrape_id(doc: &Html, scraper_context: &ScraperContext) -> Result<PopotamoUserId,ScraperError>{
 
   let profile_user_id_link = doc
     .select(selector!("a.position"))
@@ -80,7 +78,7 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
 
   let profile_user_id_href = profile_user_id_link.value().attr("href").ok_or(ScraperError::MissingLinkHref)?;
 
-  let profile_user_id_url = PopotamoUrls::new(server)
+  let profile_user_id_url = PopotamoUrls::new(scraper_context.server)
     .parse_from_root(profile_user_id_href)
     .map_err(|_| ScraperError::InvalidUserLink(profile_user_id_href.to_string()))?;
 
@@ -94,6 +92,11 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
   let profile_user_id = profile_user_id.ok_or_else(|| ScraperError::InvalidUserLink(profile_user_id_href.to_string()))?;
   let profile_user_id = PopotamoUserId::from_str(profile_user_id).map_err(|_| ScraperError::InvalidUserId(profile_user_id.to_string()))?;
 
+  Ok(profile_user_id)
+}
+
+pub(crate) fn scrape_username(doc: &Html) -> Result<PopotamoUsername,ScraperError> {
+  
   let profile_username_h2 = doc
     .select(selector!("h2.mainsheet"))
     .exactly_one()
@@ -120,16 +123,28 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
     .parse()
     .map_err(|_| ScraperError::InvalidUsername(profile_username_clean.to_string()))?;
 
+  Ok(profile_username)
+
+}
+
+pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, ScraperError> {
+  
+  let root = doc.root_element();
+
+  let scraper_context = scrape_context(root)?;
+  
+
   let profile = PopotamoProfile {
     user: ShortPopotamoUser {
-      server,
-      id: profile_user_id,
-      username: profile_username,
+      server: scraper_context.server,
+      id: scrape_id(doc,&scraper_context)?,
+      username: scrape_username(doc)?
     },
+    // items: None
   };
 
   Ok(PopotamoProfileResponse {
-    session_user: session,
+    session_user: scraper_context.session,
     profile,
   })
 }

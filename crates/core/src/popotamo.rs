@@ -94,6 +94,7 @@ pub struct PopotamoProfileResponse {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
+  // pub items: Vec<String>,
   // pub rewards: ...,
   // pub items: ...,
 }
