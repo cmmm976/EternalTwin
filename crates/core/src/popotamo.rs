@@ -99,6 +99,7 @@ impl ShortPopotamoUser {
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PopotamoSubProfile {
+  pub id: PopotamoSubProfileId,
   pub items: Vec<PopotamoUserItem>,
   // pub handicap: PopotamoUserHandicap,
 

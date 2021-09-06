@@ -32,16 +32,10 @@ pub enum ScraperError {
   MissingProfileUserItem,
   #[error("Invalid item name {:?}", .0)]
   InvalidItemName(String),
-  #[error("Missing sub profiles on user page. This user might don't have ones")]
-  MissingSubProfiles,
-  #[error("Missing onclick attribute while trying to recover a sub profile id")]
-  MissingOnClickAttribute,
   #[error("Invalid sub profile id {:?}", .0)]
   InvalidSubProfileId(String),
   #[error("Iterator failed. Index might have not been found into it.")]
   IteratorError,
-  #[error("Missing sub profile n° {:?}", .0)]
-  MissingSubProfile(String),
-  #[error("Missing divprofile_ selector on user page")]
-  MissingDivProfileSelector
+  #[error("Missing ID attribute on sub profile div")]
+  MissingIDAttribute
 }

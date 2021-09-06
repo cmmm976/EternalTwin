@@ -163,6 +163,22 @@ pub(crate) fn scrape_items(sub_profile_div: &ElementRef) -> Result<Vec<PopotamoU
   Ok(items)
 }
 
+pub(crate) fn scrape_sub_profile_id(sub_profile_div: &ElementRef) -> Result<PopotamoSubProfileId,ScraperError>{
+  let str_id = sub_profile_div
+     .value()
+     .attr("id")
+     .ok_or(ScraperError::MissingIDAttribute)?
+     .split("_")
+     .nth(1)
+     .ok_or(ScraperError::IteratorError)?;
+     
+
+    let id = PopotamoSubProfileId::from_str(str_id)
+      .map_err(|_| ScraperError::InvalidSubProfileId(str_id.to_string()))?;
+
+    Ok(id)
+}
+
 
 
 
@@ -172,14 +188,15 @@ pub(crate) fn scrape_sub_profiles(doc: &Html) -> Result<Vec<PopotamoSubProfile>,
 
   let selector = Selector::parse("div[id^='profile_']").unwrap();
 
-  //TO DO : case if user doesn't have sub profiles
   let sub_profile_divs = doc.select(&selector);
 
   for sub_profile_div in sub_profile_divs{
 
+    
+    let id: PopotamoSubProfileId = scrape_sub_profile_id(&sub_profile_div)?;
     let items: Vec<PopotamoUserItem> = scrape_items(&sub_profile_div)?;
 
-    sub_profiles.push(PopotamoSubProfile{items : items});
+    sub_profiles.push(PopotamoSubProfile{id : id, items : items});
     
   }
 
