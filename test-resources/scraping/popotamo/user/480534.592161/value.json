@@ -13,6 +13,46 @@
       "server": "popotamo.com",
       "id": "480534",
       "username": "bouillegri"
-    }
+    },
+    "sub_profiles": [
+      {
+        "items": [
+          "Voyelle",
+          "Jumelles",
+          "Vol",
+          "Révolution",
+          "Tornade",
+          "Joker",
+          "Recyclage",
+          "Boost",
+          "Poubelle"
+        ]
+      },
+      {
+        "items": [
+          "Jumelles",
+          "Bouclier",
+          "Voyelle",
+          "Vol",
+          "Révolution",
+          "Joker",
+          "Tornade",
+          "Boost",
+          "Recyclage",
+          "Poubelle"
+        ]
+      },
+      {
+        "items": [
+          "Jumelles",
+          "Recyclage",
+          "Révolution",
+          "Tornade",
+          "Boost",
+          "Joker",
+          "Poubelle"
+        ]
+      }
+    ]
   }
 }

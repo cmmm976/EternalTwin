@@ -21,6 +21,20 @@ declare_decimal_id! {
   const SQL_NAME = "popotamo_user_id";
 }
 
+declare_decimal_id! {
+  pub struct PopotamoUserHandicap(u32);
+  pub type ParseError = PopotamoUserHandicapParseError;
+  const BOUNDS = 0..1_000_000_000;
+  const SQL_NAME = "popotamo_user_handicap";
+}
+
+declare_decimal_id! {
+  pub struct PopotamoSubProfileId(u32);
+  pub type ParseError = PopotamoSubProfileIdParseError;
+  const BOUNDS = 0..1_000_000_000;
+  const SQL_NAME = "popotamo_user_handicap";
+}
+
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "_serde", serde(tag = "type", rename = "PopotamoUser"))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -34,6 +48,13 @@ declare_new_string! {
   pub type ParseError = PopotamoUsernameParseError;
   const PATTERN = r"^[0-9A-Za-z_-]{1,12}$";
   const SQL_NAME = "popotamo_username";
+}
+
+declare_new_string! {
+  pub struct PopotamoUserItem(String);
+  pub type ParseError = PopotamoUserItemParseError;
+  const PATTERN = r"^[0-9A-Za-zéèê]{1,12}$";
+  const SQL_NAME = "popotamo_useritem";
 }
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
@@ -75,11 +96,20 @@ impl ShortPopotamoUser {
   }
 }
 
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct PopotamoSubProfile {
+  pub items: Vec<PopotamoUserItem>,
+  // pub handicap: PopotamoUserHandicap,
+
+}
+
 /// Data in the top right for logged-in users
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PopotamoSessionUser {
   pub user: ShortPopotamoUser,
+  // pub sub_profiles : Vec<PopotamoSubProfile>,
   // pub rewards: ...,
 }
 
@@ -94,7 +124,8 @@ pub struct PopotamoProfileResponse {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
-  // pub items: Vec<String>,
+  pub sub_profiles : Vec<PopotamoSubProfile>,
+  // pub items: Vec<PopotamoUserItem>,
   // pub rewards: ...,
   // pub items: ...,
 }

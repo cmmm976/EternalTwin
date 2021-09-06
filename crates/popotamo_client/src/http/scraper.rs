@@ -1,5 +1,8 @@
+use etwin_core::popotamo::PopotamoSubProfile;
+use etwin_core::popotamo::PopotamoUserItem;
 use crate::http::errors::ScraperError;
 use crate::http::url::PopotamoUrls;
+use etwin_core::popotamo::PopotamoSubProfileId;
 use etwin_core::popotamo::{
   PopotamoProfile, PopotamoProfileResponse, PopotamoServer, PopotamoSessionUser, PopotamoUserId, PopotamoUsername,
   ShortPopotamoUser,
@@ -55,12 +58,22 @@ fn scrape_context(doc: ElementRef) -> Result<ScraperContext, ScraperError> {
       .parse()
       .map_err(|_| ScraperError::InvalidUsername(username.to_string()))?;
 
+    // let mut test_sub_profile: Vec<PopotamoSubProfile> = Vec::new();
+    // let item: PopotamoUserItem = "poubelle"
+    //   .parse()
+    //   .map_err(|_| ScraperError::InvalidItemName("poubelle".to_string()))?;
+
+    // let items: Vec<PopotamoUserItem> = vec![item];
+
+    // test_sub_profile.push(PopotamoSubProfile { items: items });
+
     Some(PopotamoSessionUser {
       user: ShortPopotamoUser {
         server,
         id: user_id,
         username,
       },
+      // sub_profiles : test_sub_profile,
     })
   } else {
     None
@@ -127,20 +140,67 @@ pub(crate) fn scrape_username(doc: &Html) -> Result<PopotamoUsername,ScraperErro
 
 }
 
+pub(crate) fn scrape_items(sub_profile_div: &ElementRef) -> Result<Vec<PopotamoUserItem>,ScraperError>{
+  let profile_items_td = sub_profile_div
+    .select(selector!("td.opt"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingProfileUserItems)?;
+
+  let mut items: Vec<PopotamoUserItem> = Vec::new();
+
+  for element in profile_items_td.select(selector!("img")){
+
+    let ref_item = element.value().attr("alt").ok_or(ScraperError::MissingProfileUserItem)?;
+
+    let item: PopotamoUserItem = ref_item
+      .parse()
+      .map_err(|_| ScraperError::InvalidItemName(ref_item.to_string()))?;
+
+    items.push(item);
+
+  }
+
+  Ok(items)
+}
+
+
+
+
+pub(crate) fn scrape_sub_profiles(doc: &Html) -> Result<Vec<PopotamoSubProfile>,ScraperError>
+{
+  let mut sub_profiles: Vec<PopotamoSubProfile> = Vec::new();
+
+  let selector = Selector::parse("div[id^='profile_']").unwrap();
+
+  //TO DO : case if user doesn't have sub profiles
+  let sub_profile_divs = doc.select(&selector);
+
+  for sub_profile_div in sub_profile_divs{
+
+    let items: Vec<PopotamoUserItem> = scrape_items(&sub_profile_div)?;
+
+    sub_profiles.push(PopotamoSubProfile{items : items});
+    
+  }
+
+  Ok(sub_profiles)
+}
+
 pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, ScraperError> {
   
   let root = doc.root_element();
 
   let scraper_context = scrape_context(root)?;
   
-
   let profile = PopotamoProfile {
     user: ShortPopotamoUser {
       server: scraper_context.server,
       id: scrape_id(doc,&scraper_context)?,
-      username: scrape_username(doc)?
+      username: scrape_username(doc)?,
+      
     },
-    // items: None
+    sub_profiles : scrape_sub_profiles(doc)?,
+
   };
 
   Ok(PopotamoProfileResponse {
