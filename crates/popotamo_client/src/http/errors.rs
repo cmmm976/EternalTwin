@@ -37,5 +37,41 @@ pub enum ScraperError {
   #[error("Iterator failed. Index might have not been found into it.")]
   IteratorError,
   #[error("Missing ID attribute on sub profile div")]
-  MissingIDAttribute
+  MissingIDAttribute,
+  #[error("Missing handicap td selector while scraping user sub profile")]
+  MissingHandicapTDSelector,
+  #[error("Missing an handicap value on user profile")]
+  MissingHandicapValue,
+  #[error("Invalid handicap value {:?}", .0)]
+  InvalidHandicapValue(String),
+  #[error("Missing game played td selector while scraping user sub profile")]
+  MissingGamePlayedTDSelector,
+  #[error("Missing an game played value on user profile")]
+  MissingGamePlayedValue,
+  #[error("Invalid game played value {:?}", .0)]
+  InvalidGamePlayedValue(String),
+  #[error("Missing speed div selector while scraping user sub profile")]
+  MissingSpeedDivSelector,
+  #[error("Missing a speed value on user profile")]
+  MissingSpeedValue,
+  #[error("Invalid speed value {:?}", .0)]
+  InvalidSpeedValue(String),
+  #[error("Missing creativity div selector while scraping user sub profile")]
+  MissingCreativityDivSelector,
+  #[error("Missing a creativity value on user profile")]
+  MissingCreativityValue,
+  #[error("Invalid creativity value {:?}", .0)]
+  InvalidCreativityValue(String),
+  #[error("Missing wisdom div selector while scraping user sub profile")]
+  MissingWisdomDivSelector,
+  #[error("Missing a wisdom value on user profile")]
+  MissingWisdomValue,
+  #[error("Invalid wisdom value {:?}", .0)]
+  InvalidWisdomValue(String),
+  #[error("Missing efficiency on user profile")]
+  MissingProfileEfficiency,
+  #[error("Missing efficiency value")]
+  MissingEfficiencyValue,
+  #[error("Invalid efficiency value {:?}", .0)]
+  InvalidEfficiencyValue(String),
 }

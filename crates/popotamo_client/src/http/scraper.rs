@@ -1,5 +1,11 @@
+use etwin_core::popotamo::PopotamoEfficiency;
+use etwin_core::popotamo::PopotamoGamePlayed;
 use etwin_core::popotamo::PopotamoSubProfile;
+use etwin_core::popotamo::PopotamoUserEfficiency;
+use etwin_core::popotamo::PopotamoUserHandicap;
 use etwin_core::popotamo::PopotamoUserItem;
+use etwin_core::popotamo::PopotamoUserSkill;
+use etwin_core::popotamo::PopotamoUserSkills;
 use crate::http::errors::ScraperError;
 use crate::http::url::PopotamoUrls;
 use etwin_core::popotamo::PopotamoSubProfileId;
@@ -179,24 +185,149 @@ pub(crate) fn scrape_sub_profile_id(sub_profile_div: &ElementRef) -> Result<Popo
     Ok(id)
 }
 
+pub(crate) fn scrape_handicap(sub_profile_div: &ElementRef) -> Result<PopotamoUserHandicap,ScraperError>{
+  let str_handicap = sub_profile_div
+     .select(selector!("td.pst"))
+     .exactly_one()
+     .map_err(|_| ScraperError::MissingHandicapTDSelector)?
+     .text()
+     .exactly_one()
+     .map_err(|_| ScraperError::MissingHandicapValue)?;
+     
 
+    let handicap = PopotamoUserHandicap::from_str(str_handicap)
+      .map_err(|_| ScraperError::InvalidHandicapValue(str_handicap.to_string()))?;
 
+    Ok(handicap)
+}
+pub(crate) fn scrape_game_played(sub_profile_div: &ElementRef) -> Result<PopotamoGamePlayed,ScraperError>{
+  let str_game_played = sub_profile_div
+     .select(selector!("td.gpl"))
+     .exactly_one()
+     .map_err(|_| ScraperError::MissingGamePlayedTDSelector)?
+     .text()
+     .exactly_one()
+     .map_err(|_| ScraperError::MissingGamePlayedValue)?;
+     
+
+    let game_played = PopotamoGamePlayed::from_str(str_game_played)
+      .map_err(|_| ScraperError::InvalidGamePlayedValue(str_game_played.to_string()))?;
+
+    Ok(game_played)
+}
+
+pub(crate) fn scrape_speed(sub_profile_div: &ElementRef)->Result<PopotamoUserSkill,ScraperError>{
+  
+  let str_speed = sub_profile_div
+    .select(selector!("div.nmb"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingSpeedDivSelector)?
+    .text()
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingSpeedValue)?;
+
+  let speed = PopotamoUserSkill::from_str(str_speed)
+    .map_err(|_| ScraperError::InvalidSpeedValue(str_speed.to_string()))?;
+
+  Ok(speed)
+
+}
+
+pub(crate) fn scrape_creativity(sub_profile_div: &ElementRef)->Result<PopotamoUserSkill,ScraperError>{
+  
+  let str_creativity = sub_profile_div
+    .select(selector!("div.nmbc"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingCreativityDivSelector)?
+    .text()
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingCreativityValue)?;
+
+  let creativity = PopotamoUserSkill::from_str(str_creativity)
+    .map_err(|_| ScraperError::InvalidCreativityValue(str_creativity.to_string()))?;
+
+  Ok(creativity)
+
+}
+
+pub(crate) fn scrape_wisdom(sub_profile_div: &ElementRef)->Result<PopotamoUserSkill,ScraperError>{
+  
+  let str_wisdom = sub_profile_div
+    .select(selector!("div.nmbw"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingWisdomDivSelector)?
+    .text()
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingWisdomValue)?;
+
+  let wisdom = PopotamoUserSkill::from_str(str_wisdom)
+    .map_err(|_| ScraperError::InvalidWisdomValue(str_wisdom.to_string()))?;
+
+  Ok(wisdom)
+
+}
+
+pub(crate) fn scrape_efficiency(sub_profile_div: &ElementRef) -> Result<PopotamoUserEfficiency,ScraperError>{
+  let efficiency_div = sub_profile_div
+    .select(selector!("div.efic"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingProfileEfficiency)?;
+
+  let mut effs: Vec<PopotamoEfficiency> = Vec::new();
+
+  for element in efficiency_div.select(selector!("td.numb")){
+    let ref_eff = element
+      .text()
+      .exactly_one()
+      .map_err(|_| ScraperError::MissingEfficiencyValue)?;
+
+    let eff: PopotamoEfficiency = ref_eff
+      .parse()
+      .map_err(|_| ScraperError::InvalidEfficiencyValue(ref_eff.to_string()))?;
+
+    effs.push(eff);
+
+  }
+    
+  let efficiency = PopotamoUserEfficiency{
+    first_place: effs[0],
+    second_place: effs[1],
+    third_place: effs[2],
+    fourth_place: effs[3],
+    fifth_place: effs[4],
+  };
+
+  Ok(efficiency)
+}
 
 pub(crate) fn scrape_sub_profiles(doc: &Html) -> Result<Vec<PopotamoSubProfile>,ScraperError>
 {
   let mut sub_profiles: Vec<PopotamoSubProfile> = Vec::new();
 
-  let selector = Selector::parse("div[id^='profile_']").unwrap();
+  let div_selector = Selector::parse("div[id^='profile_']").unwrap();
 
-  let sub_profile_divs = doc.select(&selector);
+  let sub_profile_divs = doc.select(&div_selector);
 
   for sub_profile_div in sub_profile_divs{
 
     
-    let id: PopotamoSubProfileId = scrape_sub_profile_id(&sub_profile_div)?;
-    let items: Vec<PopotamoUserItem> = scrape_items(&sub_profile_div)?;
+    sub_profiles.push(
 
-    sub_profiles.push(PopotamoSubProfile{id : id, items : items});
+      PopotamoSubProfile{
+
+        id : scrape_sub_profile_id(&sub_profile_div)?, 
+        items : scrape_items(&sub_profile_div)?, 
+        handicap : scrape_handicap(&sub_profile_div)?, 
+        game_played : scrape_game_played(&sub_profile_div)?,
+        skills : PopotamoUserSkills { 
+          
+          speed: scrape_speed(&sub_profile_div)?, 
+          creativity: scrape_creativity(&sub_profile_div)?, 
+          wisdom: scrape_wisdom(&sub_profile_div)?, 
+        },
+        efficiency : scrape_efficiency(&sub_profile_div)?,
+      
+      });
     
   }
 

@@ -27,12 +27,32 @@ declare_decimal_id! {
   const BOUNDS = 0..1_000_000_000;
   const SQL_NAME = "popotamo_user_handicap";
 }
+declare_decimal_id! {
+  pub struct PopotamoGamePlayed(u32);
+  pub type ParseError = PopotamoGamePlayedParseError;
+  const BOUNDS = 0..1_000_000_000;
+  const SQL_NAME = "popotamo_game_played";
+}
 
 declare_decimal_id! {
   pub struct PopotamoSubProfileId(u32);
   pub type ParseError = PopotamoSubProfileIdParseError;
   const BOUNDS = 0..1_000_000_000;
-  const SQL_NAME = "popotamo_user_handicap";
+  const SQL_NAME = "popotamo_user_sub_profile_id";
+}
+
+declare_decimal_id! {
+  pub struct PopotamoUserSkill(u32);
+  pub type ParseError = PopotamoUserSkillParseError;
+  const BOUNDS = 0..11;
+  const SQL_NAME = "popotamo_user_skill";
+}
+
+declare_decimal_id! {
+  pub struct PopotamoEfficiency(u32);
+  pub type ParseError = PopotamoEfficiencyParseError;
+  const BOUNDS = 0..1_000_000_000;
+  const SQL_NAME = "popotamo_user_efficiency";
 }
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
@@ -98,10 +118,31 @@ impl ShortPopotamoUser {
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct PopotamoUserSkills {
+  pub speed: PopotamoUserSkill,
+  pub creativity: PopotamoUserSkill,
+  pub wisdom: PopotamoUserSkill,
+}
+
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct PopotamoUserEfficiency {
+  pub first_place: PopotamoEfficiency,
+  pub second_place: PopotamoEfficiency,
+  pub third_place: PopotamoEfficiency,
+  pub fourth_place: PopotamoEfficiency,
+  pub fifth_place: PopotamoEfficiency,
+}
+
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PopotamoSubProfile {
   pub id: PopotamoSubProfileId,
   pub items: Vec<PopotamoUserItem>,
-  // pub handicap: PopotamoUserHandicap,
+  pub handicap: PopotamoUserHandicap,
+  pub game_played: PopotamoGamePlayed,
+  pub skills: PopotamoUserSkills,
+  pub efficiency: PopotamoUserEfficiency,
 
 }
 
@@ -110,8 +151,6 @@ pub struct PopotamoSubProfile {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PopotamoSessionUser {
   pub user: ShortPopotamoUser,
-  // pub sub_profiles : Vec<PopotamoSubProfile>,
-  // pub rewards: ...,
 }
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
@@ -126,9 +165,6 @@ pub struct PopotamoProfileResponse {
 pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
   pub sub_profiles : Vec<PopotamoSubProfile>,
-  // pub items: Vec<PopotamoUserItem>,
-  // pub rewards: ...,
-  // pub items: ...,
 }
 
 #[async_trait]
