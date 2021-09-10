@@ -74,4 +74,16 @@ pub enum ScraperError {
   MissingEfficiencyValue,
   #[error("Invalid efficiency value {:?}", .0)]
   InvalidEfficiencyValue(String),
+  #[error("Missing rank a selector on user page")]
+  MissingRankSelector,
+  #[error("Missing rank while splitting the string")]
+  MissingRank,
+  #[error("Invalid rank value {:?}", .0)]
+  InvalidRank(String),
+  #[error("Missing score span selector on user page")]
+  MissingScoreSelector,
+  #[error("Missing score while splitting the string")]
+  MissingScore,
+  #[error("Invalid score value {:?}", .0)]
+  InvalidScore(String)
 }

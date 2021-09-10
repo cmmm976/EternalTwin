@@ -4,7 +4,9 @@ use etwin_core::popotamo::PopotamoSubProfile;
 use etwin_core::popotamo::PopotamoUserEfficiency;
 use etwin_core::popotamo::PopotamoUserHandicap;
 use etwin_core::popotamo::PopotamoUserItem;
+use etwin_core::popotamo::PopotamoUserRank;
 use etwin_core::popotamo::PopotamoUserSkill;
+use etwin_core::popotamo::PopotamoScore;
 use etwin_core::popotamo::PopotamoUserSkills;
 use crate::http::errors::ScraperError;
 use crate::http::url::PopotamoUrls;
@@ -143,6 +145,50 @@ pub(crate) fn scrape_username(doc: &Html) -> Result<PopotamoUsername,ScraperErro
     .map_err(|_| ScraperError::InvalidUsername(profile_username_clean.to_string()))?;
 
   Ok(profile_username)
+
+}
+
+pub(crate) fn scrape_rank(doc: &Html) -> Result<PopotamoUserRank,ScraperError>{
+  let rank_a = doc
+    .select(selector!("a.position"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingRankSelector)?;
+
+  let rank_text = rank_a
+    .text()
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingRank)?
+    .split(" ")
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let rank: PopotamoUserRank = rank_text
+    .parse()
+    .map_err(|_| ScraperError::InvalidRank(rank_text.to_string()))?;
+
+  Ok(rank)
+
+}
+
+pub(crate) fn scrape_score(doc: &Html) -> Result<PopotamoScore,ScraperError>{
+  let score_a = doc
+    .select(selector!("span.score"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingScoreSelector)?;
+
+  let score_text = score_a
+    .text()
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingScore)?
+    .split(" ")
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let score: PopotamoScore = score_text
+    .parse()
+    .map_err(|_| ScraperError::InvalidScore(score_text.to_string()))?;
+
+  Ok(score)
 
 }
 
@@ -348,6 +394,8 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
       
     },
     sub_profiles : scrape_sub_profiles(doc)?,
+    rank : scrape_rank(doc)?,
+    score : scrape_score(doc)?,
 
   };
 

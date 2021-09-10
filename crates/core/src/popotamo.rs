@@ -55,6 +55,20 @@ declare_decimal_id! {
   const SQL_NAME = "popotamo_user_efficiency";
 }
 
+declare_decimal_id! {
+  pub struct PopotamoUserRank(u32);
+  pub type ParseError = PopotamoUserRankParseError;
+  const BOUNDS = 0..69_342;
+  const SQL_NAME = "popotamo_user_rank";
+}
+
+declare_decimal_id! {
+  pub struct PopotamoScore(u32);
+  pub type ParseError = PopotamoScoreParseError;
+  const BOUNDS = 0..69_342;
+  const SQL_NAME = "popotamo_score";
+}
+
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "_serde", serde(tag = "type", rename = "PopotamoUser"))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -164,7 +178,10 @@ pub struct PopotamoProfileResponse {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
+  pub score: PopotamoScore,
+  pub rank : PopotamoUserRank,
   pub sub_profiles : Vec<PopotamoSubProfile>,
+  
 }
 
 #[async_trait]
