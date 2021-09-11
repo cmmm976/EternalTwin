@@ -1,9 +1,11 @@
 use etwin_core::popotamo::PopotamoEfficiency;
 use etwin_core::popotamo::PopotamoGamePlayed;
+use etwin_core::popotamo::PopotamoNbCupWon;
 use etwin_core::popotamo::PopotamoSubProfile;
 use etwin_core::popotamo::PopotamoUserEfficiency;
 use etwin_core::popotamo::PopotamoUserHandicap;
 use etwin_core::popotamo::PopotamoUserItem;
+use etwin_core::popotamo::PopotamoUserLeaderboard;
 use etwin_core::popotamo::PopotamoUserRank;
 use etwin_core::popotamo::PopotamoUserSkill;
 use etwin_core::popotamo::PopotamoScore;
@@ -66,22 +68,12 @@ fn scrape_context(doc: ElementRef) -> Result<ScraperContext, ScraperError> {
       .parse()
       .map_err(|_| ScraperError::InvalidUsername(username.to_string()))?;
 
-    // let mut test_sub_profile: Vec<PopotamoSubProfile> = Vec::new();
-    // let item: PopotamoUserItem = "poubelle"
-    //   .parse()
-    //   .map_err(|_| ScraperError::InvalidItemName("poubelle".to_string()))?;
-
-    // let items: Vec<PopotamoUserItem> = vec![item];
-
-    // test_sub_profile.push(PopotamoSubProfile { items: items });
-
     Some(PopotamoSessionUser {
       user: ShortPopotamoUser {
         server,
         id: user_id,
         username,
       },
-      // sub_profiles : test_sub_profile,
     })
   } else {
     None
@@ -190,6 +182,85 @@ pub(crate) fn scrape_score(doc: &Html) -> Result<PopotamoScore,ScraperError>{
 
   Ok(score)
 
+}
+
+pub(crate) fn scrape_leaderboard(doc: &Html) -> Result<PopotamoUserLeaderboard,ScraperError>{
+  let lb_h2 = doc
+    .select(selector!("h2.mainsheet"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingH2Selector)?;
+
+  let lb_a = lb_h2
+    .select(selector!("img"))
+    .next()
+    .ok_or(ScraperError::MissingLeaderboardSelector)?;
+
+  let lb_src = lb_a.value().attr("src").ok_or(ScraperError::MissingLeaderboardSRC)?;
+
+  let lb_str = lb_src
+    .split("/")
+    .nth(3)
+    .ok_or(ScraperError::IteratorError)?
+    .split(".")
+    .next()
+    .ok_or(ScraperError::IteratorError)?;
+
+  let lb: PopotamoUserLeaderboard = lb_str
+    .parse()
+    .map_err(|_| ScraperError::InvalidLeaderboard(lb_str.to_string()))?;
+
+  Ok(lb)
+    
+
+}
+
+pub(crate) fn scrape_moderator_status(doc: &Html) -> Result<bool,ScraperError>{
+  let mod_h2 = doc
+    .select(selector!("h2.mainsheet"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingH2Selector)?;
+
+  let mod_selector = Selector::parse(r"[alt='Modérateur']").unwrap();
+
+  let moderator_img = mod_h2
+    .select(&mod_selector)
+    .next()
+    .ok_or(ScraperError::MissingModeratorStatus);
+
+  let ismoderator = moderator_img.is_ok();
+
+  Ok(ismoderator)
+    
+
+}
+
+pub(crate) fn scrape_nb_cup_won(doc: &Html) -> Result<PopotamoNbCupWon,ScraperError>{
+  
+  let mut nb_cups: PopotamoNbCupWon = "0".parse().unwrap();
+  
+  let cups = doc
+    .select(selector!("div.pricesheet"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingCupsSelector);
+
+  if cups.is_ok(){
+    let nb_cups_str= cups?
+      .text()
+      .next()
+      .ok_or(ScraperError::MissingNbCupWonValue)?
+      .split("\t\t\t")
+      .nth(1)
+      .ok_or(ScraperError::IteratorError)?
+      .split(' ')
+      .next()
+      .ok_or(ScraperError::IteratorError)?;
+
+    nb_cups = nb_cups_str
+      .parse()
+      .map_err(|_| ScraperError::InvalidNbCupWonValue(nb_cups_str.to_string()))?;
+  }
+
+  Ok(nb_cups)
 }
 
 pub(crate) fn scrape_items(sub_profile_div: &ElementRef) -> Result<Vec<PopotamoUserItem>,ScraperError>{
@@ -396,6 +467,9 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
     sub_profiles : scrape_sub_profiles(doc)?,
     rank : scrape_rank(doc)?,
     score : scrape_score(doc)?,
+    leaderboard : scrape_leaderboard(doc)?,
+    ismoderator : scrape_moderator_status(doc)?,
+    nb_cups_won : scrape_nb_cup_won(doc)?,
 
   };
 

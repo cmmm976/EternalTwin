@@ -24,7 +24,7 @@ declare_decimal_id! {
 declare_decimal_id! {
   pub struct PopotamoUserHandicap(u32);
   pub type ParseError = PopotamoUserHandicapParseError;
-  const BOUNDS = 0..1_000_000_000;
+  const BOUNDS = 0..651;
   const SQL_NAME = "popotamo_user_handicap";
 }
 declare_decimal_id! {
@@ -67,6 +67,19 @@ declare_decimal_id! {
   pub type ParseError = PopotamoScoreParseError;
   const BOUNDS = 0..69_342;
   const SQL_NAME = "popotamo_score";
+}
+
+declare_decimal_id! {
+  pub struct PopotamoUserLeaderboard(u32);
+  pub type ParseError = PopotamoUserLeaderboardParseError;
+  const BOUNDS = 1..5;
+  const SQL_NAME = "popotamo_user_leadearboard";
+}
+declare_decimal_id! {
+  pub struct PopotamoNbCupWon(u32);
+  pub type ParseError = PopotamoNbCupWonParseError;
+  const BOUNDS = 0..30;
+  const SQL_NAME = "popotamo_nb_cups_won";
 }
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
@@ -180,6 +193,9 @@ pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
   pub score: PopotamoScore,
   pub rank : PopotamoUserRank,
+  pub ismoderator : bool,
+  pub nb_cups_won : PopotamoNbCupWon,
+  pub leaderboard : PopotamoUserLeaderboard,
   pub sub_profiles : Vec<PopotamoSubProfile>,
   
 }

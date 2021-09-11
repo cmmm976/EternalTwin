@@ -85,5 +85,19 @@ pub enum ScraperError {
   #[error("Missing score while splitting the string")]
   MissingScore,
   #[error("Invalid score value {:?}", .0)]
-  InvalidScore(String)
+  InvalidScore(String),
+  #[error("Missing leaderboard selector on user page")]
+  MissingLeaderboardSelector,
+  #[error("Missing leaderboard src attribute")]
+  MissingLeaderboardSRC,
+  #[error("Invalid leaderboard value {:?}", .0)]
+  InvalidLeaderboard(String),
+  #[error("Missing moderator status on user page")]
+  MissingModeratorStatus,
+  #[error("Missing cups selector on user page")]
+  MissingCupsSelector,
+  #[error("Missing nb of cups won on user page (user should have won cups)")]
+  MissingNbCupWonValue,
+  #[error("Invalid number of cup won value {:?}", .0)]
+  InvalidNbCupWonValue(String),
 }
