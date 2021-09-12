@@ -2,14 +2,21 @@ use etwin_core::popotamo::PopotamoEfficiency;
 use etwin_core::popotamo::PopotamoGamePlayed;
 use etwin_core::popotamo::PopotamoNbCupWon;
 use etwin_core::popotamo::PopotamoSubProfile;
+use etwin_core::popotamo::PopotamoUserBirthDate;
+use etwin_core::popotamo::PopotamoUserCity;
+use etwin_core::popotamo::PopotamoUserCountry;
+use etwin_core::popotamo::PopotamoUserCreationDate;
 use etwin_core::popotamo::PopotamoUserEfficiency;
 use etwin_core::popotamo::PopotamoUserHandicap;
 use etwin_core::popotamo::PopotamoUserItem;
 use etwin_core::popotamo::PopotamoUserLeaderboard;
+use etwin_core::popotamo::PopotamoUserPersonalInfos;
 use etwin_core::popotamo::PopotamoUserRank;
+use etwin_core::popotamo::PopotamoUserSex;
 use etwin_core::popotamo::PopotamoUserSkill;
 use etwin_core::popotamo::PopotamoScore;
 use etwin_core::popotamo::PopotamoUserSkills;
+use etwin_core::popotamo::PopotamoUserUniqueReward;
 use crate::http::errors::ScraperError;
 use crate::http::url::PopotamoUrls;
 use etwin_core::popotamo::PopotamoSubProfileId;
@@ -263,6 +270,77 @@ pub(crate) fn scrape_nb_cup_won(doc: &Html) -> Result<PopotamoNbCupWon,ScraperEr
   Ok(nb_cups)
 }
 
+pub(crate) fn scrape_unique_rewards(doc: &Html) -> Result<Vec<PopotamoUserUniqueReward>,ScraperError>{
+  let unique_rewards_div = doc
+    .select(selector!("div.rewardsLeft"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissinguniqueRewardsSelector);
+
+  let mut rewards: Vec<PopotamoUserUniqueReward> = Vec::new();
+
+  if unique_rewards_div.is_ok(){
+
+    for element in unique_rewards_div?.select(selector!("img")){
+
+      let ref_reward = element
+        .value()
+        .attr("src")
+        .ok_or(ScraperError::MissingUniqueRewardLink)?
+        .split("/")
+        .nth(3)
+        .ok_or(ScraperError::IteratorError)?
+        .split(".")
+        .next()
+        .ok_or(ScraperError::IteratorError)?;
+
+      let reward: PopotamoUserUniqueReward = ref_reward
+        .parse()
+        .map_err(|_| ScraperError::InvalidUniqueRewardName(ref_reward.to_string()))?;
+
+      rewards.push(reward);
+
+    }
+  }
+
+  Ok(rewards)
+
+
+}
+
+pub(crate) fn scrape_creation_date(doc: &Html) -> Result<PopotamoUserCreationDate,ScraperError>{
+  
+  let ul_selector = Selector::parse(r"[style='margin-left: 100px;']").unwrap();
+  
+  
+  let creation_date_ul = doc
+    .select(&ul_selector)
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingCreationDateSelector)?;
+
+  let creation_date_li = creation_date_ul
+    .select(selector!("li"))
+    .nth(1)
+    .ok_or(ScraperError::MissingCreationDate)?;
+
+  let creation_date_str = creation_date_li
+    .text()
+    .next()
+    .ok_or(ScraperError::IteratorError)?
+    .split(" : ")
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let creation_date: PopotamoUserCreationDate = creation_date_str
+    .parse()
+    .map_err(|_| ScraperError::InvalidCreationDate(creation_date_str.to_string()))?;
+
+
+  Ok(creation_date)
+    
+}
+
+
+
 pub(crate) fn scrape_items(sub_profile_div: &ElementRef) -> Result<Vec<PopotamoUserItem>,ScraperError>{
   let profile_items_td = sub_profile_div
     .select(selector!("td.opt"))
@@ -451,6 +529,118 @@ pub(crate) fn scrape_sub_profiles(doc: &Html) -> Result<Vec<PopotamoSubProfile>,
   Ok(sub_profiles)
 }
 
+pub(crate) fn scrape_sex(personal_infos_ul : &ElementRef) -> Result<PopotamoUserSex,ScraperError>{
+  let sex_str = personal_infos_ul
+    .select(selector!("li"))
+    .next()
+    .ok_or(ScraperError::MissingSexSelector)?
+    .text()
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let mut sex: PopotamoUserSex = PopotamoUserSex::Femme;
+  
+  if sex_str == "femme"{
+    sex = PopotamoUserSex::Femme;
+  }
+  else if sex_str == "homme"{
+    sex = PopotamoUserSex::Homme;
+  }
+  Ok(sex)
+  
+}
+
+pub(crate) fn scrape_birth_date(personal_infos_ul : &ElementRef) -> Result<PopotamoUserBirthDate,ScraperError>{
+  let birth_date_str = personal_infos_ul
+    .select(selector!("li"))
+    .nth(1)
+    .ok_or(ScraperError::MissingBirthDateSelector)?
+    .text()
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?
+    .split("le ")
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let birth_date: PopotamoUserBirthDate = birth_date_str
+    .parse()
+    .map_err(|_| ScraperError::InvalidBirthDate(birth_date_str.to_string()))?;
+
+  Ok(birth_date)
+  
+}
+
+pub(crate) fn scrape_city(personal_infos_ul : &ElementRef) -> Result<PopotamoUserCity,ScraperError>{
+  let city_str = personal_infos_ul
+    .select(selector!("li"))
+    .nth(2)
+    .ok_or(ScraperError::MissingCitySelector)?
+    .text()
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let city: PopotamoUserCity = city_str
+    .parse()
+    .map_err(|_| ScraperError::InvalidCity(city_str.to_string()))?;
+
+  Ok(city)
+  
+}
+
+pub(crate) fn scrape_country(personal_infos_ul : &ElementRef) -> Result<PopotamoUserCountry,ScraperError>{
+  let country_str = personal_infos_ul
+    .select(selector!("li"))
+    .nth(3)
+    .ok_or(ScraperError::MissingCountrySelector)?
+    .text()
+    .nth(1)
+    .ok_or(ScraperError::IteratorError)?;
+
+  let country: PopotamoUserCountry = country_str
+    .parse()
+    .map_err(|_| ScraperError::InvalidCountry(country_str.to_string()))?;
+
+  Ok(country)
+  
+}
+
+pub(crate) fn scrape_personal_infos(doc: &Html) -> Result<PopotamoUserPersonalInfos,ScraperError>{
+  
+  let personal_infos_ul = doc
+    .select(selector!("ul.hisself"))
+    .exactly_one()
+    .map_err(|_| ScraperError::MissingPersonalInfosSelector)?;
+
+  let mut sex = PopotamoUserSex::NA;
+  let mut birth_date: Option<PopotamoUserBirthDate> = None;
+  let mut city: Option<PopotamoUserCity> = None;
+  let mut country: Option<PopotamoUserCountry> = None;
+  
+  if scrape_sex(&personal_infos_ul).is_ok(){
+    sex = scrape_sex(&personal_infos_ul)?;
+  }
+  if scrape_birth_date(&personal_infos_ul).is_ok(){
+    birth_date = Some(scrape_birth_date(&personal_infos_ul)?);
+  }
+  if scrape_city(&personal_infos_ul).is_ok(){
+    city = Some(scrape_city(&personal_infos_ul)?);
+  }
+  if scrape_country(&personal_infos_ul).is_ok() {
+    country = Some(scrape_country(&personal_infos_ul)?);   
+  }
+
+  let personal_infos = PopotamoUserPersonalInfos {
+    sex: sex,
+    birth_date: birth_date,
+    city: city,
+    country: country,
+
+  };
+
+  Ok(personal_infos)
+
+}
+
 pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, ScraperError> {
   
   let root = doc.root_element();
@@ -470,6 +660,9 @@ pub(crate) fn scrape_profile(doc: &Html) -> Result<PopotamoProfileResponse, Scra
     leaderboard : scrape_leaderboard(doc)?,
     ismoderator : scrape_moderator_status(doc)?,
     nb_cups_won : scrape_nb_cup_won(doc)?,
+    unique_rewards : scrape_unique_rewards(doc)?,
+    creation_date : scrape_creation_date(doc)?,
+    personal_infos : scrape_personal_infos(doc)?,
 
   };
 

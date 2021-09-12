@@ -24,7 +24,7 @@ declare_decimal_id! {
 declare_decimal_id! {
   pub struct PopotamoUserHandicap(u32);
   pub type ParseError = PopotamoUserHandicapParseError;
-  const BOUNDS = 0..651;
+  const BOUNDS = 250..651;
   const SQL_NAME = "popotamo_user_handicap";
 }
 declare_decimal_id! {
@@ -78,7 +78,7 @@ declare_decimal_id! {
 declare_decimal_id! {
   pub struct PopotamoNbCupWon(u32);
   pub type ParseError = PopotamoNbCupWonParseError;
-  const BOUNDS = 0..30;
+  const BOUNDS = 0..200; //There is one cup per mounth since March 2007, which leads to a number of 169 in September 2021
   const SQL_NAME = "popotamo_nb_cups_won";
 }
 
@@ -103,6 +103,50 @@ declare_new_string! {
   const PATTERN = r"^[0-9A-Za-zéèê]{1,12}$";
   const SQL_NAME = "popotamo_useritem";
 }
+
+declare_new_string! {
+  pub struct PopotamoUserUniqueReward(String);
+  pub type ParseError = PopotamoUserUniqueRewardParseError;
+  const PATTERN = r"^[0-9A-Za-zéèê]{1,20}$";
+  const SQL_NAME = "popotamo_user_unique_reward";
+}
+
+declare_new_string! {
+  pub struct PopotamoUserCity(String);
+  pub type ParseError = PopotamoUserCityParseError;
+  const PATTERN = r"^[0-9A-Za-zéèê\s]{1,30}$";
+  const SQL_NAME = "popotamo_user_city";
+}
+
+declare_new_string! {
+  pub struct PopotamoUserCreationDate(String);
+  pub type ParseError = PopotamoUserCreationDateParseError;
+  const PATTERN = r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$";
+  const SQL_NAME = "popotamo_user_creation_date";
+}
+
+declare_new_string! {
+  pub struct PopotamoUserBirthDate(String);
+  pub type ParseError = PopotamoUserBirthDateParseError;
+  const PATTERN = r"^\d{2}/\d{2}/\d{4}$";
+  const SQL_NAME = "popotamo_user_birth_date";
+}
+
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PopotamoUserSex{
+  Homme,
+  Femme,
+  NA,
+}
+
+declare_new_string! {
+  pub struct PopotamoUserCountry(String);
+  pub type ParseError = PopotamoUserCountryError;
+  const PATTERN = r"^[0-9A-Za-zéèê\s]{1,25}$";
+  const SQL_NAME = "popotamo_user_country";
+}
+
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -141,6 +185,15 @@ impl ShortPopotamoUser {
       id: self.id,
     }
   }
+}
+
+#[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct PopotamoUserPersonalInfos {
+  pub sex: PopotamoUserSex,
+  pub birth_date: Option<PopotamoUserBirthDate>,
+  pub city: Option<PopotamoUserCity>,
+  pub country : Option<PopotamoUserCountry>,
 }
 
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
@@ -191,12 +244,15 @@ pub struct PopotamoProfileResponse {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PopotamoProfile {
   pub user: ShortPopotamoUser,
+  pub creation_date : PopotamoUserCreationDate,
   pub score: PopotamoScore,
   pub rank : PopotamoUserRank,
   pub ismoderator : bool,
   pub nb_cups_won : PopotamoNbCupWon,
   pub leaderboard : PopotamoUserLeaderboard,
+  pub unique_rewards : Vec<PopotamoUserUniqueReward>,
   pub sub_profiles : Vec<PopotamoSubProfile>,
+  pub personal_infos : PopotamoUserPersonalInfos,
   
 }
 

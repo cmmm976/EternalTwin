@@ -100,4 +100,32 @@ pub enum ScraperError {
   MissingNbCupWonValue,
   #[error("Invalid number of cup won value {:?}", .0)]
   InvalidNbCupWonValue(String),
+  #[error("Missing unique rewards div selector on user page")]
+  MissinguniqueRewardsSelector,
+  #[error("Missing unique reward link while scraping user page")]
+  MissingUniqueRewardLink,
+  #[error("Invalid unique reward value {:?}", .0)]
+  InvalidUniqueRewardName(String),
+  #[error("Missing creation date ul selector on user page")]
+  MissingCreationDateSelector,
+  #[error("Missing profile creation date on user page")]
+  MissingCreationDate,
+  #[error("Invalid user creation date {:?}", .0)]
+  InvalidCreationDate(String),
+  #[error("Missing personal infos selector on user page")]
+  MissingPersonalInfosSelector,
+  #[error("Missing sex li selector on user page")]
+  MissingSexSelector,
+  #[error("Missing birth date li selector on user page")]
+  MissingBirthDateSelector,
+  #[error("Invalid user birth date {:?}", .0)]
+  InvalidBirthDate(String),
+  #[error("Missing city li selector on user page")]
+  MissingCitySelector,
+  #[error("Invalid user city {:?}", .0)]
+  InvalidCity(String),
+  #[error("Missing country li selector on user page")]
+  MissingCountrySelector,
+  #[error("Invalid user country {:?}", .0)]
+  InvalidCountry(String)
 }
