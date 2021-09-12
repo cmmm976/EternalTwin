@@ -34,8 +34,6 @@ pub enum ScraperError {
   InvalidItemName(String),
   #[error("Invalid sub profile id {:?}", .0)]
   InvalidSubProfileId(String),
-  #[error("Iterator failed. Index might have not been found into it.")]
-  IteratorError,
   #[error("Missing ID attribute on sub profile div")]
   MissingIDAttribute,
   #[error("Missing handicap td selector while scraping user sub profile")]
@@ -127,5 +125,34 @@ pub enum ScraperError {
   #[error("Missing country li selector on user page")]
   MissingCountrySelector,
   #[error("Invalid user country {:?}", .0)]
-  InvalidCountry(String)
+  InvalidCountry(String),
+  #[error("Iterator error sex")]
+  IteratorErrorSex,
+  #[error("Iterator error BD1")]
+  IteratorErrorBD1,
+  #[error("Iterator error BD2")]
+  IteratorErrorBD2,
+  #[error("Iterator error city")]
+  IteratorErrorCity,
+  #[error("Iterator error country")]
+  IteratorErrorCountry,
+  #[error("Iterator error sub profile id")]
+  IteratorErrorSubProfileId,
+  #[error("Iterator error Creation Date 1")]
+  IteratorErrorCreationDate1,
+  #[error("Iterator error Creation Date 2")]
+  IteratorErrorCreationDate2,
+  #[error("Iterator error rewards")]
+  IteratorErrorRewards1,
+  #[error("Iterator error rewards")]
+  IteratorErrorRewards2,
+  #[error("Iterator error cups")]
+  IteratorErrorCups,
+  #[error("Iterator error leaderboard")]
+  IteratorErrorLB,
+  #[error("Iterator error score")]
+  IteratorErrorScore,
+  #[error("Iterator error rank")]
+  IteratorErrorRank
+
 }

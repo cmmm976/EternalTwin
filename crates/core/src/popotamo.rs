@@ -58,7 +58,7 @@ declare_decimal_id! {
 declare_decimal_id! {
   pub struct PopotamoUserRank(u32);
   pub type ParseError = PopotamoUserRankParseError;
-  const BOUNDS = 0..69_342;
+  const BOUNDS = 0..500_000;
   const SQL_NAME = "popotamo_user_rank";
 }
 
@@ -137,7 +137,6 @@ declare_new_string! {
 pub enum PopotamoUserSex{
   Homme,
   Femme,
-  NA,
 }
 
 declare_new_string! {
@@ -190,7 +189,7 @@ impl ShortPopotamoUser {
 #[cfg_attr(feature = "_serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PopotamoUserPersonalInfos {
-  pub sex: PopotamoUserSex,
+  pub sex: Option<PopotamoUserSex>,
   pub birth_date: Option<PopotamoUserBirthDate>,
   pub city: Option<PopotamoUserCity>,
   pub country : Option<PopotamoUserCountry>,

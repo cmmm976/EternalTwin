@@ -159,7 +159,7 @@ pub(crate) fn scrape_rank(doc: &Html) -> Result<PopotamoUserRank,ScraperError>{
     .map_err(|_| ScraperError::MissingRank)?
     .split(" ")
     .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorRank)?;
 
   let rank: PopotamoUserRank = rank_text
     .parse()
@@ -181,7 +181,7 @@ pub(crate) fn scrape_score(doc: &Html) -> Result<PopotamoScore,ScraperError>{
     .map_err(|_| ScraperError::MissingScore)?
     .split(" ")
     .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorScore)?;
 
   let score: PopotamoScore = score_text
     .parse()
@@ -207,10 +207,10 @@ pub(crate) fn scrape_leaderboard(doc: &Html) -> Result<PopotamoUserLeaderboard,S
   let lb_str = lb_src
     .split("/")
     .nth(3)
-    .ok_or(ScraperError::IteratorError)?
+    .ok_or(ScraperError::IteratorErrorLB)?
     .split(".")
     .next()
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorLB)?;
 
   let lb: PopotamoUserLeaderboard = lb_str
     .parse()
@@ -250,23 +250,30 @@ pub(crate) fn scrape_nb_cup_won(doc: &Html) -> Result<PopotamoNbCupWon,ScraperEr
     .exactly_one()
     .map_err(|_| ScraperError::MissingCupsSelector);
 
-  if cups.is_ok(){
-    let nb_cups_str= cups?
+  
+  let nb_cups_not_clean= cups?
       .text()
       .next()
       .ok_or(ScraperError::MissingNbCupWonValue)?
       .split("\t\t\t")
       .nth(1)
-      .ok_or(ScraperError::IteratorError)?
-      .split(' ')
-      .next()
-      .ok_or(ScraperError::IteratorError)?;
+      .ok_or(ScraperError::IteratorErrorCups);
 
-    nb_cups = nb_cups_str
-      .parse()
-      .map_err(|_| ScraperError::InvalidNbCupWonValue(nb_cups_str.to_string()))?;
+  let mut nb_cups_str = "";
+
+  if nb_cups_not_clean.is_ok(){
+      nb_cups_str = nb_cups_not_clean?
+        .split(' ')
+        .next()
+        .ok_or(ScraperError::IteratorErrorCups)?;
+
+      nb_cups = nb_cups_str
+        .parse()
+        .map_err(|_| ScraperError::InvalidNbCupWonValue(nb_cups_str.to_string()))?;
   }
-
+      
+  
+  
   Ok(nb_cups)
 }
 
@@ -288,10 +295,10 @@ pub(crate) fn scrape_unique_rewards(doc: &Html) -> Result<Vec<PopotamoUserUnique
         .ok_or(ScraperError::MissingUniqueRewardLink)?
         .split("/")
         .nth(3)
-        .ok_or(ScraperError::IteratorError)?
+        .ok_or(ScraperError::IteratorErrorRewards1)?
         .split(".")
         .next()
-        .ok_or(ScraperError::IteratorError)?;
+        .ok_or(ScraperError::IteratorErrorRewards2)?;
 
       let reward: PopotamoUserUniqueReward = ref_reward
         .parse()
@@ -325,10 +332,10 @@ pub(crate) fn scrape_creation_date(doc: &Html) -> Result<PopotamoUserCreationDat
   let creation_date_str = creation_date_li
     .text()
     .next()
-    .ok_or(ScraperError::IteratorError)?
+    .ok_or(ScraperError::IteratorErrorCreationDate1)?
     .split(" : ")
     .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorCreationDate2)?;
 
   let creation_date: PopotamoUserCreationDate = creation_date_str
     .parse()
@@ -371,7 +378,7 @@ pub(crate) fn scrape_sub_profile_id(sub_profile_div: &ElementRef) -> Result<Popo
      .ok_or(ScraperError::MissingIDAttribute)?
      .split("_")
      .nth(1)
-     .ok_or(ScraperError::IteratorError)?;
+     .ok_or(ScraperError::IteratorErrorSubProfileId)?;
      
 
     let id = PopotamoSubProfileId::from_str(str_id)
@@ -536,14 +543,14 @@ pub(crate) fn scrape_sex(personal_infos_ul : &ElementRef) -> Result<PopotamoUser
     .ok_or(ScraperError::MissingSexSelector)?
     .text()
     .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorSex)?;
 
-  let mut sex: PopotamoUserSex = PopotamoUserSex::Femme;
-  
-  if sex_str == "femme"{
+  let mut sex: PopotamoUserSex = PopotamoUserSex::Homme;
+
+  if sex_str == "femme "{
     sex = PopotamoUserSex::Femme;
   }
-  else if sex_str == "homme"{
+  else if sex_str == "homme "{
     sex = PopotamoUserSex::Homme;
   }
   Ok(sex)
@@ -551,33 +558,77 @@ pub(crate) fn scrape_sex(personal_infos_ul : &ElementRef) -> Result<PopotamoUser
 }
 
 pub(crate) fn scrape_birth_date(personal_infos_ul : &ElementRef) -> Result<PopotamoUserBirthDate,ScraperError>{
-  let birth_date_str = personal_infos_ul
+
+  let birth_date_li = personal_infos_ul
     .select(selector!("li"))
     .nth(1)
-    .ok_or(ScraperError::MissingBirthDateSelector)?
+    .ok_or(ScraperError::MissingBirthDateSelector)?;
+
+  let birth_date_label = birth_date_li
     .text()
-    .nth(1)
-    .ok_or(ScraperError::IteratorError)?
-    .split("le ")
-    .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .next()
+    .ok_or(ScraperError::IteratorErrorBD1)?;
+
+  let mut birth_date_str = "";
+
+  if birth_date_label == "Anniversaire : "{
+    birth_date_str = birth_date_li
+      .text()
+      .nth(1)
+      .ok_or(ScraperError::IteratorErrorBD2)?
+      .split("le ")
+      .nth(1)
+      .ok_or(ScraperError::IteratorErrorBD2)?;
+  }
 
   let birth_date: PopotamoUserBirthDate = birth_date_str
     .parse()
     .map_err(|_| ScraperError::InvalidBirthDate(birth_date_str.to_string()))?;
 
   Ok(birth_date)
+
   
 }
 
 pub(crate) fn scrape_city(personal_infos_ul : &ElementRef) -> Result<PopotamoUserCity,ScraperError>{
-  let city_str = personal_infos_ul
+  //if city field is the third member of the iterator
+  let mut city_li = personal_infos_ul
     .select(selector!("li"))
     .nth(2)
-    .ok_or(ScraperError::MissingCitySelector)?
+    .ok_or(ScraperError::MissingCitySelector)?;
+
+  let mut city_label = city_li
     .text()
-    .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .next()
+    .ok_or(ScraperError::IteratorErrorCity)?;
+
+  let mut city_str = "";
+
+  if city_label == "Ville : "{
+    city_str = city_li
+      .text()
+      .nth(1)
+      .ok_or(ScraperError::IteratorErrorCity)?
+  }
+  //if city is the second member of the iterator
+  else{
+    city_li = personal_infos_ul
+      .select(selector!("li"))
+      .nth(1)
+      .ok_or(ScraperError::MissingCitySelector)?;
+
+    city_label = city_li
+    .text()
+    .next()
+    .ok_or(ScraperError::IteratorErrorCity)?;
+
+    if city_label == "Ville : "{
+      city_str = city_li
+        .text()
+        .nth(1)
+        .ok_or(ScraperError::IteratorErrorCity)?
+    }
+  }
 
   let city: PopotamoUserCity = city_str
     .parse()
@@ -590,11 +641,11 @@ pub(crate) fn scrape_city(personal_infos_ul : &ElementRef) -> Result<PopotamoUse
 pub(crate) fn scrape_country(personal_infos_ul : &ElementRef) -> Result<PopotamoUserCountry,ScraperError>{
   let country_str = personal_infos_ul
     .select(selector!("li"))
-    .nth(3)
+    .last()
     .ok_or(ScraperError::MissingCountrySelector)?
     .text()
     .nth(1)
-    .ok_or(ScraperError::IteratorError)?;
+    .ok_or(ScraperError::IteratorErrorCountry)?;
 
   let country: PopotamoUserCountry = country_str
     .parse()
@@ -611,13 +662,13 @@ pub(crate) fn scrape_personal_infos(doc: &Html) -> Result<PopotamoUserPersonalIn
     .exactly_one()
     .map_err(|_| ScraperError::MissingPersonalInfosSelector)?;
 
-  let mut sex = PopotamoUserSex::NA;
+  let mut sex: Option<PopotamoUserSex> = None;
   let mut birth_date: Option<PopotamoUserBirthDate> = None;
   let mut city: Option<PopotamoUserCity> = None;
   let mut country: Option<PopotamoUserCountry> = None;
   
   if scrape_sex(&personal_infos_ul).is_ok(){
-    sex = scrape_sex(&personal_infos_ul)?;
+    sex = Some(scrape_sex(&personal_infos_ul)?);
   }
   if scrape_birth_date(&personal_infos_ul).is_ok(){
     birth_date = Some(scrape_birth_date(&personal_infos_ul)?);
